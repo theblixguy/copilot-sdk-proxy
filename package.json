@@ -7,11 +7,11 @@
   "author": "Suyash Srijan",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/theblixguy/copilot-proxy.git"
+    "url": "git+https://github.com/theblixguy/copilot-sdk-proxy.git"
   },
-  "homepage": "https://github.com/theblixguy/copilot-proxy#readme",
+  "homepage": "https://github.com/theblixguy/copilot-sdk-proxy#readme",
   "bugs": {
-    "url": "https://github.com/theblixguy/copilot-proxy/issues"
+    "url": "https://github.com/theblixguy/copilot-sdk-proxy/issues"
   },
   "keywords": [
     "copilot",
