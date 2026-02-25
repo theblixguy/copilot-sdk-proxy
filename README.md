@@ -1,4 +1,4 @@
-# @copilot-proxy/core
+# copilot-proxy
 
 A proxy server that wraps the [GitHub Copilot SDK](https://github.com/github/copilot-sdk) and exposes it as an OpenAI, Anthropic, or Codex (Responses) compatible API. Any client that speaks one of these APIs can talk to it.
 
@@ -20,7 +20,7 @@ Or set a `GITHUB_TOKEN` environment variable with a valid fine-grained Copilot a
 **2. Install:**
 
 ```bash
-npm install -g @copilot-proxy/core
+npm install -g copilot-proxy
 ```
 
 **3. Start the server:**
@@ -106,7 +106,7 @@ import {
   Logger,
   Stats,
   providers,
-} from "@copilot-proxy/core";
+} from "copilot-proxy";
 
 const logger = new Logger("info");
 const service = new CopilotService({ logLevel: "info", logger });

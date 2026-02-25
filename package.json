@@ -1,5 +1,5 @@
 {
-  "name": "@copilot-proxy/core",
+  "name": "copilot-proxy",
   "version": "1.0.0",
   "description": "Generic proxy server translating OpenAI/Anthropic/Codex API requests into GitHub Copilot SDK sessions",
   "type": "module",

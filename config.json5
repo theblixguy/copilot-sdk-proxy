@@ -1,4 +1,4 @@
-// Configuration for @copilot-proxy/core.
+// Configuration for copilot-proxy.
 // Edit this file to add MCP servers, control tool access, and set permissions.
 
 {
