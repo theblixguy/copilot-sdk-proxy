@@ -20,6 +20,8 @@ const copilotModels = [
   "claude-sonnet-4.5",
   "gpt-5",
   "gpt-5.1",
+  "o3-mini",
+  "o4-mini",
 ].map(model);
 
 describe("resolveModel", () => {
@@ -78,6 +80,16 @@ describe("resolveModel", () => {
     expect(resolveModel("claude-haiku-4-5-20251001", copilotModels)).toBe(
       "claude-haiku-4.5",
     );
+  });
+
+  it("handles o-series models (exact match)", () => {
+    expect(resolveModel("o3-mini", copilotModels)).toBe("o3-mini");
+  });
+
+  it("falls back within o-series family", () => {
+    // o3 isn't available but o3-mini is, and they share the "o" family
+    // with o3-mini winning on longest prefix
+    expect(resolveModel("o3", copilotModels)).toBe("o3-mini");
   });
 
   it("returns undefined for empty models array", () => {
