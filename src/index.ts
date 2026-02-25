@@ -18,6 +18,9 @@ export {
   recordUsageEvent,
 } from "./providers/shared/streaming-utils.js";
 
+// Re-export all SDK types so consumers don't need a direct @github/copilot-sdk dependency
+export type * from "@github/copilot-sdk";
+
 // Session config
 export { createSessionConfig, type SessionConfigOptions } from "./providers/shared/session-config.js";
 
