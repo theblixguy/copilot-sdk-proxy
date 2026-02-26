@@ -96,6 +96,8 @@ export function createCompletionsHandler({ service, logger, config, stats }: App
         }
       }
 
+      conversation.model = req.model;
+
       const sessionConfig = createSessionConfig({
         model: req.model,
         systemMessage,
