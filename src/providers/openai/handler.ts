@@ -25,6 +25,12 @@ export function createCompletionsHandler({ service, logger, config, stats }: App
       return;
     }
     const req = parseResult.data;
+
+    if (req.stream === false) {
+      sendError(reply, 400, "invalid_request_error", "Only streaming responses are supported (stream must be true or omitted)");
+      return;
+    }
+
     const messages = req.messages;
 
     const { conversation, isReuse } = manager.findForNewRequest();
@@ -89,6 +95,8 @@ export function createCompletionsHandler({ service, logger, config, stats }: App
           logger.warn("Failed to check model capabilities:", err);
         }
       }
+
+      conversation.model = req.model;
 
       const sessionConfig = createSessionConfig({
         model: req.model,

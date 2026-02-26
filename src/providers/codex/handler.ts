@@ -74,6 +74,11 @@ export function createResponsesHandler(
     }
     const req = parseResult.data;
 
+    if (req.stream === false) {
+      sendError(reply, 400, "invalid_request_error", "Only streaming responses are supported (stream must be true or omitted)");
+      return;
+    }
+
     if (options?.beforeHandler) {
       const handled = await options.beforeHandler(req, reply);
       if (handled) return;

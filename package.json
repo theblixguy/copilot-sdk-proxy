@@ -1,6 +1,6 @@
 {
   "name": "copilot-sdk-proxy",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Generic proxy server translating OpenAI/Anthropic/Codex API requests into GitHub Copilot SDK sessions",
   "type": "module",
   "license": "MIT",

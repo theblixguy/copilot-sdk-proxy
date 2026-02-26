@@ -93,6 +93,24 @@ describe("ChatCompletionRequestSchema", () => {
     expect(result.success).toBe(true);
   });
 
+  it("accepts stream: true", () => {
+    const result = ChatCompletionRequestSchema.safeParse({
+      ...validRequest,
+      stream: true,
+    });
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.stream).toBe(true);
+  });
+
+  it("accepts stream: false", () => {
+    const result = ChatCompletionRequestSchema.safeParse({
+      ...validRequest,
+      stream: false,
+    });
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.stream).toBe(false);
+  });
+
   it("accepts messages with tool_calls", () => {
     const result = ChatCompletionRequestSchema.safeParse({
       model: "gpt-4",

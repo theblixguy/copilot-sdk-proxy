@@ -13,10 +13,14 @@ export interface CopilotServiceOptions {
   cwd?: string | undefined;
 }
 
+const MODEL_CACHE_TTL_MS = 30 * 60 * 1000;
+
 export class CopilotService {
   readonly cwd: string;
   private client: CopilotClient;
   private logger: Logger | undefined;
+  private cachedModels: ModelInfo[] | undefined;
+  private cachedModelsAt = 0;
 
   constructor(options: CopilotServiceOptions = {}) {
     this.cwd = options.cwd ?? process.cwd();
@@ -43,7 +47,13 @@ export class CopilotService {
   }
 
   async listModels(): Promise<ModelInfo[]> {
-    return this.client.listModels();
+    if (this.cachedModels && Date.now() - this.cachedModelsAt < MODEL_CACHE_TTL_MS) {
+      return this.cachedModels;
+    }
+    const models = await this.client.listModels();
+    this.cachedModels = models;
+    this.cachedModelsAt = Date.now();
+    return models;
   }
 
   async createSession(config: SessionConfig): Promise<CopilotSession> {

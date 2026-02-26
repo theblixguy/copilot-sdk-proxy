@@ -1,7 +1,39 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { recordUsageEvent, formatCompaction } from "../src/providers/shared/streaming-utils.js";
+import { sendSSEEvent, recordUsageEvent, formatCompaction } from "../src/providers/shared/streaming-utils.js";
 import { Stats, type UsageData } from "../src/stats.js";
 import { Logger } from "../src/logger.js";
+
+function mockReply(): { reply: Parameters<typeof sendSSEEvent>[0]; written: string[] } {
+  const written: string[] = [];
+  const reply = { raw: { write: (chunk: string) => { written.push(chunk); } } } as unknown as Parameters<typeof sendSSEEvent>[0];
+  return { reply, written };
+}
+
+describe("sendSSEEvent", () => {
+  it("writes SSE event with event line and data", () => {
+    const { reply, written } = mockReply();
+    sendSSEEvent(reply, "message_start", { message: { id: "1" } });
+    expect(written[0]).toMatch(/^event: message_start\ndata: /);
+    const parsed = JSON.parse(written[0]!.split("data: ")[1]!.trim());
+    expect(parsed.message).toEqual({ id: "1" });
+  });
+
+  it("injects type and sequence_number when sequenceNumber is provided", () => {
+    const { reply, written } = mockReply();
+    sendSSEEvent(reply, "response.created", { response: {} }, 0);
+    const parsed = JSON.parse(written[0]!.split("data: ")[1]!.trim());
+    expect(parsed.type).toBe("response.created");
+    expect(parsed.sequence_number).toBe(0);
+  });
+
+  it("does not inject type when sequenceNumber is omitted", () => {
+    const { reply, written } = mockReply();
+    sendSSEEvent(reply, "content_block_start", { index: 0 });
+    const parsed = JSON.parse(written[0]!.split("data: ")[1]!.trim());
+    expect(parsed.type).toBeUndefined();
+    expect(parsed.sequence_number).toBeUndefined();
+  });
+});
 
 describe("recordUsageEvent", () => {
   afterEach(() => {

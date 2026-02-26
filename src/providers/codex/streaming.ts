@@ -20,26 +20,32 @@ export function nextSeq(counter: SeqCounter): number {
   return counter.value++;
 }
 
+export interface ResponseStreamState {
+  seq: SeqCounter;
+  createdAt: number;
+}
+
 export function startResponseStream(
   reply: FastifyReply,
   responseId: string,
   model: string,
-): SeqCounter {
-  const counter: SeqCounter = { value: 0 };
+): ResponseStreamState {
+  const seq: SeqCounter = { value: 0 };
+  const createdAt = currentTimestamp();
   reply.raw.writeHead(200, SSE_HEADERS);
 
   const response: ResponseObject = {
     id: responseId,
     object: "response",
-    created_at: currentTimestamp(),
+    created_at: createdAt,
     model,
     status: "in_progress",
     output: [],
   };
 
-  sendEvent(reply, "response.created", { response }, nextSeq(counter));
-  sendEvent(reply, "response.in_progress", { response }, nextSeq(counter));
-  return counter;
+  sendEvent(reply, "response.created", { response }, nextSeq(seq));
+  sendEvent(reply, "response.in_progress", { response }, nextSeq(seq));
+  return { seq, createdAt };
 }
 
 export class ResponsesProtocol implements StreamProtocol {
@@ -52,11 +58,13 @@ export class ResponsesProtocol implements StreamProtocol {
   protected readonly responseId: string;
   protected readonly model: string;
   protected readonly seq: SeqCounter;
+  protected readonly createdAt: number;
 
-  constructor(responseId: string, model: string, seq: SeqCounter) {
+  constructor(responseId: string, model: string, seq: SeqCounter, createdAt: number) {
     this.responseId = responseId;
     this.model = model;
     this.seq = seq;
+    this.createdAt = createdAt;
   }
 
   protected ensureMessageItem(r: FastifyReply): void {
@@ -116,7 +124,7 @@ export class ResponsesProtocol implements StreamProtocol {
     const response: ResponseObject = {
       id: this.responseId,
       object: "response",
-      created_at: currentTimestamp(),
+      created_at: this.createdAt,
       model: this.model,
       status,
       output: this.outputItems,
@@ -161,7 +169,7 @@ export async function handleResponsesStreaming(
   logger: Logger,
   stats: Stats,
 ): Promise<boolean> {
-  const seq = startResponseStream(reply, responseId, model);
-  const protocol = new ResponsesProtocol(responseId, model, seq);
+  const { seq, createdAt } = startResponseStream(reply, responseId, model);
+  const protocol = new ResponsesProtocol(responseId, model, seq, createdAt);
   return runSessionStreaming(session, prompt, reply, protocol, logger, stats);
 }

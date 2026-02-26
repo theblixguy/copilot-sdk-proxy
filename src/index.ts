@@ -142,6 +142,7 @@ export {
 export { createResponsesHandler, type ResponsesHandlerOptions } from "./providers/codex/handler.js";
 export {
   type SeqCounter,
+  type ResponseStreamState,
   nextSeq,
   startResponseStream,
   ResponsesProtocol,

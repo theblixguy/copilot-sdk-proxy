@@ -53,6 +53,7 @@ export const ChatCompletionRequestSchema = z.object({
       }),
     )
     .optional(),
+  stream: z.boolean().optional(),
   tool_choice: z.unknown().optional(),
   user: z.string().optional(),
 });

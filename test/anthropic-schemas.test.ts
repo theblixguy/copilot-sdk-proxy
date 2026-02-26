@@ -182,6 +182,24 @@ describe("AnthropicMessagesRequestSchema", () => {
     expect(result.success).toBe(true);
   });
 
+  it("accepts stream: true", () => {
+    const result = AnthropicMessagesRequestSchema.safeParse({
+      ...validRequest,
+      stream: true,
+    });
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.stream).toBe(true);
+  });
+
+  it("accepts stream: false", () => {
+    const result = AnthropicMessagesRequestSchema.safeParse({
+      ...validRequest,
+      stream: false,
+    });
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.stream).toBe(false);
+  });
+
   it("accepts optional fields", () => {
     const result = AnthropicMessagesRequestSchema.safeParse({
       ...validRequest,
