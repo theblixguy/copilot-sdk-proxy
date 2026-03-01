@@ -10,7 +10,7 @@ import {
   formatResponsesPrompt,
   extractInstructions,
 } from "./prompt.js";
-import { resolveModelForSession } from "../shared/model-resolver.js";
+import { normalizeModelId, resolveModelForSession } from "../shared/model-resolver.js";
 import { createSessionConfig } from "../shared/session-config.js";
 import { handleResponsesStreaming } from "./streaming.js";
 import { sendOpenAIError as sendError } from "../shared/errors.js";
@@ -93,7 +93,7 @@ export function createResponsesHandler(
         : `New conversation ${conversation.id}`,
     );
 
-    if (isReuse && conversation.model && conversation.model !== req.model) {
+    if (isReuse && conversation.model && normalizeModelId(conversation.model) !== normalizeModelId(req.model)) {
       logger.warn(
         `Model mismatch: session uses "${conversation.model}" but request sent "${req.model}" (SDK does not support mid-session model switching)`,
       );

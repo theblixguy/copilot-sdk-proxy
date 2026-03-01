@@ -3,7 +3,7 @@ import type { CopilotService } from "../../copilot-service.js";
 import type { ReasoningEffort } from "../../config.js";
 import type { Logger } from "../../logger.js";
 
-function normalize(id: string): string {
+export function normalizeModelId(id: string): string {
   return id.replace(/-\d{8}$/, "").replace(/\./g, "-");
 }
 
@@ -25,9 +25,9 @@ export function resolveModel(
     return requestedModel;
   }
 
-  const normalizedRequest = normalize(requestedModel);
+  const normalizedRequest = normalizeModelId(requestedModel);
   const normalizedMatch = availableModels.find(
-    (m) => normalize(m.id) === normalizedRequest,
+    (m) => normalizeModelId(m.id) === normalizedRequest,
   );
   if (normalizedMatch) {
     logger?.debug(
@@ -40,13 +40,13 @@ export function resolveModel(
   // so fall back to the closest model in the same family.
   const requestFamily = extractFamily(normalizedRequest);
   const familyMatches = availableModels.filter(
-    (m) => extractFamily(normalize(m.id)) === requestFamily,
+    (m) => extractFamily(normalizeModelId(m.id)) === requestFamily,
   );
 
   let best: ModelInfo | undefined;
   let bestLen = 0;
   for (const m of familyMatches) {
-    const norm = normalize(m.id);
+    const norm = normalizeModelId(m.id);
     let len = 0;
     const minLen = Math.min(normalizedRequest.length, norm.length);
     while (len < minLen && normalizedRequest[len] === norm[len]) len++;

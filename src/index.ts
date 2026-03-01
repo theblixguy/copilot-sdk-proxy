@@ -25,7 +25,7 @@ export type * from "@github/copilot-sdk";
 export { createSessionConfig, type SessionConfigOptions } from "./providers/shared/session-config.js";
 
 // Model resolution
-export { resolveModel, resolveModelForSession, type ModelResolution } from "./providers/shared/model-resolver.js";
+export { normalizeModelId, resolveModel, resolveModelForSession, type ModelResolution } from "./providers/shared/model-resolver.js";
 
 // Errors
 export { sendOpenAIError, sendAnthropicError } from "./providers/shared/errors.js";

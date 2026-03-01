@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import type { ModelInfo } from "@github/copilot-sdk";
-import { resolveModel } from "../src/providers/shared/model-resolver.js";
+import { normalizeModelId, resolveModel } from "../src/providers/shared/model-resolver.js";
 
 function model(id: string): ModelInfo {
   return {
@@ -94,5 +94,28 @@ describe("resolveModel", () => {
 
   it("returns undefined for empty models array", () => {
     expect(resolveModel("claude-sonnet-4.5", [])).toBeUndefined();
+  });
+});
+
+describe("normalizeModelId", () => {
+  it("replaces dots with hyphens", () => {
+    expect(normalizeModelId("claude-opus-4.6")).toBe("claude-opus-4-6");
+  });
+
+  it("strips date suffix", () => {
+    expect(normalizeModelId("claude-sonnet-4-5-20250929")).toBe("claude-sonnet-4-5");
+  });
+
+  it("strips date suffix and replaces dots", () => {
+    expect(normalizeModelId("claude-haiku-4.5-20251001")).toBe("claude-haiku-4-5");
+  });
+
+  it("returns already-normalized IDs unchanged", () => {
+    expect(normalizeModelId("claude-opus-4-6")).toBe("claude-opus-4-6");
+  });
+
+  it("treats SDK and Anthropic model IDs as equal", () => {
+    expect(normalizeModelId("claude-opus-4.6")).toBe(normalizeModelId("claude-opus-4-6"));
+    expect(normalizeModelId("claude-sonnet-4.5")).toBe(normalizeModelId("claude-sonnet-4-5"));
   });
 });
