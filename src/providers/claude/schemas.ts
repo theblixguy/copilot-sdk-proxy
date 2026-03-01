@@ -77,14 +77,6 @@ export interface MessageStopEvent {
   type: "message_stop";
 }
 
-export type AnthropicSSEEvent =
-  | MessageStartEvent
-  | ContentBlockStartEvent
-  | ContentBlockDeltaEvent
-  | ContentBlockStopEvent
-  | MessageDeltaEvent
-  | MessageStopEvent;
-
 export interface AnthropicErrorResponse {
   type: "error";
   error: {

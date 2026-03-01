@@ -133,7 +133,7 @@ describe("createSessionConfig", () => {
       config: defaultConfig({ autoApprovePermissions: true }),
       supportsReasoningEffort: false,
     });
-    const response = await result.onPermissionRequest!({ kind: "read" } as never);
+    const response = await result.onPermissionRequest({ kind: "read" }, { sessionId: "test" });
     expect(response.kind).toBe("approved");
   });
 
@@ -144,7 +144,7 @@ describe("createSessionConfig", () => {
       config: defaultConfig({ autoApprovePermissions: false }),
       supportsReasoningEffort: false,
     });
-    const response = await result.onPermissionRequest!({ kind: "read" } as never);
+    const response = await result.onPermissionRequest({ kind: "read" }, { sessionId: "test" });
     expect(response.kind).toBe("denied-by-rules");
   });
 
@@ -155,9 +155,9 @@ describe("createSessionConfig", () => {
       config: defaultConfig({ autoApprovePermissions: ["read", "write"] }),
       supportsReasoningEffort: false,
     });
-    const readResponse = await result.onPermissionRequest!({ kind: "read" } as never);
+    const readResponse = await result.onPermissionRequest({ kind: "read" }, { sessionId: "test" });
     expect(readResponse.kind).toBe("approved");
-    const shellResponse = await result.onPermissionRequest!({ kind: "shell" } as never);
+    const shellResponse = await result.onPermissionRequest({ kind: "shell" }, { sessionId: "test" });
     expect(shellResponse.kind).toBe("denied-by-rules");
   });
 
@@ -168,7 +168,7 @@ describe("createSessionConfig", () => {
       config: defaultConfig(),
       supportsReasoningEffort: false,
     });
-    const response = await result.onUserInputRequest!({ question: "What?" } as never);
+    const response = await result.onUserInputRequest!({ question: "What?" }, { sessionId: "test" });
     expect(response.wasFreeform).toBe(true);
     expect(response.answer).toContain("not available");
   });
@@ -181,7 +181,7 @@ describe("createSessionConfig", () => {
       config,
       supportsReasoningEffort: false,
     });
-    const response = await result.hooks!.onPreToolUse!({ toolName: "glob" } as never);
+    const response = await result.hooks!.onPreToolUse!({ toolName: "glob" } as never, { sessionId: "test" });
     expect(response).toEqual({ permissionDecision: "allow" });
   });
 
@@ -193,7 +193,7 @@ describe("createSessionConfig", () => {
       config,
       supportsReasoningEffort: false,
     });
-    const response = await result.hooks!.onPreToolUse!({ toolName: "anything" } as never);
+    const response = await result.hooks!.onPreToolUse!({ toolName: "anything" } as never, { sessionId: "test" });
     expect(response).toEqual({ permissionDecision: "allow" });
   });
 
@@ -205,7 +205,7 @@ describe("createSessionConfig", () => {
       config,
       supportsReasoningEffort: false,
     });
-    const response = await result.hooks!.onPreToolUse!({ toolName: "bash" } as never);
+    const response = await result.hooks!.onPreToolUse!({ toolName: "bash" } as never, { sessionId: "test" });
     expect(response).toEqual({ permissionDecision: "deny" });
   });
 
@@ -227,7 +227,7 @@ describe("createSessionConfig", () => {
       config,
       supportsReasoningEffort: false,
     });
-    const response = await result.hooks!.onPreToolUse!({ toolName: "custom_tool" } as never);
+    const response = await result.hooks!.onPreToolUse!({ toolName: "custom_tool" } as never, { sessionId: "test" });
     expect(response).toEqual({ permissionDecision: "allow" });
   });
 });

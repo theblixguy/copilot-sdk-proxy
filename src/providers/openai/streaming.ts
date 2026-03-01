@@ -45,7 +45,7 @@ export class OpenAIProtocol implements StreamProtocol {
     r.raw.write("data: [DONE]\n\n");
   }
 
-  sendFailed(_r: FastifyReply): void {
+  sendFailed(_reply: FastifyReply): void {
     // OpenAI format does not send a special failure frame
   }
 

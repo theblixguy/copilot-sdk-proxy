@@ -32,6 +32,8 @@ export function formatResponsesPrompt(
         case "assistant":
           if (content) parts.push(`[Assistant]: ${content}`);
           break;
+        default:
+          item.role satisfies never;
       }
     } else if (item.type === "function_call") {
       parts.push(`[Assistant called tool ${item.name} with args: ${item.arguments}]`);
