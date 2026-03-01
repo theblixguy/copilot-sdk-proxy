@@ -9,7 +9,7 @@ import {
 } from "./schemas.js";
 import type { AnthropicMessagesRequest } from "./schemas.js";
 import { formatAnthropicPrompt } from "./prompt.js";
-import { resolveModelForSession } from "../shared/model-resolver.js";
+import { normalizeModelId, resolveModelForSession } from "../shared/model-resolver.js";
 import { createSessionConfig } from "../shared/session-config.js";
 import { handleAnthropicStreaming } from "./streaming.js";
 import { sendAnthropicError as sendError } from "../shared/errors.js";
@@ -60,12 +60,9 @@ export function createMessagesHandler(
     const parseResult = AnthropicMessagesRequestSchema.safeParse(request.body);
     if (!parseResult.success) {
       const firstIssue = parseResult.error.issues[0];
-      sendError(
-        reply,
-        400,
-        "invalid_request_error",
-        firstIssue?.message ?? "Invalid request body",
-      );
+      const message = firstIssue?.message ?? "Invalid request body";
+      logger.warn(`Schema validation failed: ${message} (path: ${firstIssue?.path?.join(".") ?? "root"})`);
+      sendError(reply, 400, "invalid_request_error", message);
       return;
     }
     const req = parseResult.data;
@@ -90,7 +87,7 @@ export function createMessagesHandler(
     );
 
     // SDK doesn't support switching models mid-session (github/copilot-sdk#409)
-    if (isReuse && conversation.model && conversation.model !== req.model) {
+    if (isReuse && conversation.model && normalizeModelId(conversation.model) !== normalizeModelId(req.model)) {
       logger.warn(
         `Model mismatch: session uses "${conversation.model}" but request sent "${req.model}" (SDK does not support mid-session model switching)`,
       );

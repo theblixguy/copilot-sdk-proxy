@@ -120,15 +120,29 @@ const ToolResultBlockSchema = z.object({
   content: ToolResultContentSchema.optional(),
 });
 
-const ContentBlockSchema = z.discriminatedUnion("type", [
+const KnownContentBlockSchema = z.discriminatedUnion("type", [
   TextBlockSchema,
   ToolUseBlockSchema,
   ToolResultBlockSchema,
 ]);
 
+// Accept any object with a type field so unknown block types (e.g. thinking,
+// server_tool_use) don't fail validation. We filter them out after parsing.
+const LooseContentBlockSchema = z.union([
+  KnownContentBlockSchema,
+  z.object({ type: z.string() }).passthrough(),
+]);
+
+const KNOWN_BLOCK_TYPES = new Set(["text", "tool_use", "tool_result"]);
+
 const AnthropicMessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
-  content: z.union([z.string(), z.array(ContentBlockSchema)]),
+  content: z.union([
+    z.string(),
+    z.array(LooseContentBlockSchema).transform((blocks) =>
+      blocks.filter((b): b is ContentBlock => KNOWN_BLOCK_TYPES.has(b.type)),
+    ),
+  ]),
 });
 
 const AnthropicToolDefinitionSchema = z.object({

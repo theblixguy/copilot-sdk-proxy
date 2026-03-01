@@ -166,6 +166,46 @@ describe("AnthropicMessagesRequestSchema", () => {
     }
   });
 
+  it("accepts unknown content block types and filters them out", () => {
+    const result = AnthropicMessagesRequestSchema.safeParse({
+      ...validRequest,
+      messages: [
+        {
+          role: "assistant",
+          content: [
+            { type: "thinking", thinking: "Let me consider..." },
+            { type: "text", text: "Here is my answer." },
+          ],
+        },
+      ],
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      const blocks = result.data.messages[0]!.content;
+      expect(blocks).toHaveLength(1);
+      expect(blocks).toEqual([{ type: "text", text: "Here is my answer." }]);
+    }
+  });
+
+  it("accepts a message where all blocks are unknown", () => {
+    const result = AnthropicMessagesRequestSchema.safeParse({
+      ...validRequest,
+      messages: [
+        {
+          role: "assistant",
+          content: [
+            { type: "thinking", thinking: "hmm" },
+            { type: "server_tool_use", id: "st_01", name: "web_search" },
+          ],
+        },
+      ],
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.messages[0]!.content).toHaveLength(0);
+    }
+  });
+
   it("accepts system as string", () => {
     const result = AnthropicMessagesRequestSchema.safeParse({
       ...validRequest,
