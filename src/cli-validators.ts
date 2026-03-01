@@ -12,10 +12,12 @@ export function isProviderName(value: string): value is ProviderName {
   return value in providers;
 }
 
+const MAX_PORT = 65535;
+
 export function parsePort(value: string): number {
   const port = parseInt(value, 10);
-  if (isNaN(port) || port < 1 || port > 65535) {
-    throw new Error(`Invalid port "${value}". Must be 1-65535.`);
+  if (isNaN(port) || port < 1 || port > MAX_PORT) {
+    throw new Error(`Invalid port "${value}". Must be 1-${String(MAX_PORT)}.`);
   }
   return port;
 }
