@@ -95,6 +95,16 @@ Options:
   -h, --help                     Show help
 ```
 
+## Development
+
+```bash
+npm run build # Compile TypeScript
+npm run dev # Run from source with tsx
+npm test # Run tests
+npm run lint # Lint with ESLint
+npm run typecheck # Type-check without emitting
+```
+
 ## Using as a library
 
 The package exports its internals so you can build on top of it. This is how [`xcode-copilot-server`](https://github.com/theblixguy/xcode-copilot-server) adds Xcode-specific things like tool bridging and settings patching.

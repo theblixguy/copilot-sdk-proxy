@@ -8,24 +8,21 @@ export { CopilotService, type CopilotServiceOptions } from "./copilot-service.js
 // Conversation management
 export { DefaultConversationManager, type Conversation, type ConversationManager } from "./conversation-manager.js";
 
-// Streaming
+// Streaming core
 export { runSessionStreaming, type StreamProtocol } from "./providers/shared/streaming-core.js";
-export {
-  SSE_HEADERS,
-  sendSSEEvent,
-  sendSSEComment,
-  formatCompaction,
-  recordUsageEvent,
-} from "./providers/shared/streaming-utils.js";
+export { SSE_HEADERS, sendSSEEvent, sendSSEComment, currentTimestamp, formatCompaction, recordUsageEvent } from "./providers/shared/streaming-utils.js";
 
 // Re-export all SDK types so consumers don't need a direct @github/copilot-sdk dependency
 export type * from "@github/copilot-sdk";
+
+// Handler pipeline
+export { runHandlerPipeline, type HandlerPipeline, type BaseHandlerOptions } from "./providers/shared/handler-core.js";
 
 // Session config
 export { createSessionConfig, type SessionConfigOptions } from "./providers/shared/session-config.js";
 
 // Model resolution
-export { normalizeModelId, resolveModel, resolveModelForSession, type ModelResolution } from "./providers/shared/model-resolver.js";
+export { normalizeModelId, resolveModel, resolveModelForSession, type ModelResolution, type ModelMatch } from "./providers/shared/model-resolver.js";
 
 // Errors
 export { sendOpenAIError, sendAnthropicError } from "./providers/shared/errors.js";
@@ -73,81 +70,52 @@ export {
 export { type Provider } from "./providers/types.js";
 export { providers, type ProviderName } from "./providers/index.js";
 
-// OpenAI provider schemas and formatters
+// OpenAI provider
 export {
   ChatCompletionRequestSchema,
   extractContentText,
-  currentTimestamp as openaiCurrentTimestamp,
+  extractSystemMessages,
   type ChatCompletionMessage,
   type ChatCompletionRequest,
   type ChatCompletionChunk,
   type Choice,
-  type Model,
   type ModelsResponse,
 } from "./providers/openai/schemas.js";
-export { formatPrompt } from "./providers/openai/prompt.js";
 export { createModelsHandler } from "./providers/openai/models.js";
-export { createCompletionsHandler, type HandlerOptions } from "./providers/openai/handler.js";
-export { handleStreaming as handleOpenAIStreaming } from "./providers/openai/streaming.js";
+export { createCompletionsHandler, type CompletionsHandlerOptions } from "./providers/openai/handler.js";
+export { OpenAIProtocol, handleStreaming as handleOpenAIStreaming } from "./providers/openai/streaming.js";
 
-// Claude provider schemas and formatters
+// Claude provider
 export {
   AnthropicMessagesRequestSchema,
   extractAnthropicSystem,
   type AnthropicMessage,
-  type AnthropicToolDefinition,
   type AnthropicMessagesRequest,
-  type TextBlock,
-  type ToolUseBlock,
-  type ToolResultBlock,
   type ContentBlock,
-  type AnthropicSSEEvent,
-  type MessageStartEvent,
-  type ContentBlockStartEvent,
-  type ContentBlockDeltaEvent,
-  type ContentBlockStopEvent,
-  type MessageDeltaEvent,
-  type MessageStopEvent,
   type AnthropicErrorResponse,
   type CountTokensResponse,
+  type AnthropicToolDefinition,
+  type ContentBlockStopEvent,
 } from "./providers/claude/schemas.js";
-export { formatAnthropicPrompt } from "./providers/claude/prompt.js";
 export { createCountTokensHandler } from "./providers/claude/count-tokens.js";
 export { createMessagesHandler, type MessagesHandlerOptions } from "./providers/claude/handler.js";
-export { startReply, AnthropicProtocol, handleAnthropicStreaming } from "./providers/claude/streaming.js";
+export { AnthropicProtocol, handleAnthropicStreaming, startReply } from "./providers/claude/streaming.js";
+export { formatAnthropicPrompt } from "./providers/claude/prompt.js";
 
-// Codex provider schemas and formatters
+// Codex provider
 export {
   ResponsesRequestSchema,
   filterFunctionTools,
-  currentTimestamp as codexCurrentTimestamp,
   genId,
-  type InputItem,
-  type InputMessage,
-  type FunctionCallInput,
-  type FunctionCallOutputInput,
-  type ResponsesTool,
   type ResponsesRequest,
-  type MessageContent,
-  type MessageOutputItem,
-  type FunctionCallOutputItem,
-  type OutputItem,
   type ResponseObject,
+  type OutputItem,
+  type FunctionCallOutputInput,
+  type FunctionCallOutputItem,
 } from "./providers/codex/schemas.js";
-export {
-  formatResponsesPrompt,
-  extractInstructions,
-  extractFunctionCallOutputs,
-} from "./providers/codex/prompt.js";
 export { createResponsesHandler, type ResponsesHandlerOptions } from "./providers/codex/handler.js";
-export {
-  type SeqCounter,
-  type ResponseStreamState,
-  nextSeq,
-  startResponseStream,
-  ResponsesProtocol,
-  handleResponsesStreaming,
-} from "./providers/codex/streaming.js";
+export { ResponsesProtocol, handleResponsesStreaming, nextSeq, startResponseStream, type SeqCounter } from "./providers/codex/streaming.js";
+export { extractFunctionCallOutputs, formatResponsesPrompt } from "./providers/codex/prompt.js";
 
 // Individual providers
 export { openaiProvider } from "./providers/openai/provider.js";

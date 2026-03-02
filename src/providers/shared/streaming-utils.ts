@@ -32,6 +32,12 @@ export function recordUsageEvent(stats: Stats, logger: Logger, data: UsageData):
   logger.debug(`Usage: ${String(data.inputTokens ?? 0)} in, ${String(data.outputTokens ?? 0)} out, cost=${String(data.cost ?? 0)}`);
 }
 
+const MS_PER_SECOND = 1000;
+
+export function currentTimestamp(): number {
+  return Math.floor(Date.now() / MS_PER_SECOND);
+}
+
 export function formatCompaction(data: unknown): string {
   if (
     !data ||

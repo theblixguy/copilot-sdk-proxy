@@ -26,74 +26,80 @@ const copilotModels = [
 
 describe("resolveModel", () => {
   it("exact match returns as-is", () => {
-    expect(resolveModel("claude-sonnet-4.5", copilotModels)).toBe(
-      "claude-sonnet-4.5",
-    );
+    expect(resolveModel("claude-sonnet-4.5", copilotModels)).toEqual({
+      ok: true, model: "claude-sonnet-4.5",
+    });
   });
 
   it("strips date suffix and normalizes dots", () => {
-    expect(resolveModel("claude-sonnet-4-5-20250929", copilotModels)).toBe(
-      "claude-sonnet-4.5",
-    );
+    expect(resolveModel("claude-sonnet-4-5-20250929", copilotModels)).toEqual({
+      ok: true, model: "claude-sonnet-4.5",
+    });
   });
 
   it("strips date suffix for model without minor version", () => {
-    expect(resolveModel("claude-sonnet-4-20250514", copilotModels)).toBe(
-      "claude-sonnet-4",
-    );
+    expect(resolveModel("claude-sonnet-4-20250514", copilotModels)).toEqual({
+      ok: true, model: "claude-sonnet-4",
+    });
   });
 
   it("normalizes hyphens to dots without date", () => {
-    expect(resolveModel("claude-haiku-4-5", copilotModels)).toBe(
-      "claude-haiku-4.5",
-    );
+    expect(resolveModel("claude-haiku-4-5", copilotModels)).toEqual({
+      ok: true, model: "claude-haiku-4.5",
+    });
   });
 
   it("falls back to same family when version not available", () => {
     // Opus 4.6 doesn't exist in Copilot, should fall back to 4.5
-    expect(resolveModel("claude-opus-4-6", copilotModels)).toBe(
-      "claude-opus-4.5",
-    );
+    expect(resolveModel("claude-opus-4-6", copilotModels)).toEqual({
+      ok: true, model: "claude-opus-4.5",
+    });
   });
 
   it("falls back to closest in family when multiple candidates", () => {
     // claude-sonnet-4-7 doesn't exist and the family has 4 and 4.5, so
     // "claude-sonnet-4-5" wins because it shares a longer prefix than "claude-sonnet-4"
-    expect(resolveModel("claude-sonnet-4-7", copilotModels)).toBe(
-      "claude-sonnet-4.5",
-    );
+    expect(resolveModel("claude-sonnet-4-7", copilotModels)).toEqual({
+      ok: true, model: "claude-sonnet-4.5",
+    });
   });
 
-  it("returns undefined for completely unknown model", () => {
-    expect(resolveModel("unknown-model-123", copilotModels)).toBeUndefined();
+  it("returns ok: false for completely unknown model", () => {
+    expect(resolveModel("unknown-model-123", copilotModels)).toEqual({ ok: false });
   });
 
-  it("returns undefined for different family with no match", () => {
-    expect(resolveModel("claude-mega-5-0", copilotModels)).toBeUndefined();
+  it("returns ok: false for different family with no match", () => {
+    expect(resolveModel("claude-mega-5-0", copilotModels)).toEqual({ ok: false });
   });
 
   it("handles non-claude models (exact match)", () => {
-    expect(resolveModel("gpt-5", copilotModels)).toBe("gpt-5");
+    expect(resolveModel("gpt-5", copilotModels)).toEqual({
+      ok: true, model: "gpt-5",
+    });
   });
 
   it("handles date suffix on haiku model", () => {
-    expect(resolveModel("claude-haiku-4-5-20251001", copilotModels)).toBe(
-      "claude-haiku-4.5",
-    );
+    expect(resolveModel("claude-haiku-4-5-20251001", copilotModels)).toEqual({
+      ok: true, model: "claude-haiku-4.5",
+    });
   });
 
   it("handles o-series models (exact match)", () => {
-    expect(resolveModel("o3-mini", copilotModels)).toBe("o3-mini");
+    expect(resolveModel("o3-mini", copilotModels)).toEqual({
+      ok: true, model: "o3-mini",
+    });
   });
 
   it("falls back within o-series family", () => {
     // o3 isn't available but o3-mini is, and they share the "o" family
     // with o3-mini winning on longest prefix
-    expect(resolveModel("o3", copilotModels)).toBe("o3-mini");
+    expect(resolveModel("o3", copilotModels)).toEqual({
+      ok: true, model: "o3-mini",
+    });
   });
 
-  it("returns undefined for empty models array", () => {
-    expect(resolveModel("claude-sonnet-4.5", [])).toBeUndefined();
+  it("returns ok: false for empty models array", () => {
+    expect(resolveModel("claude-sonnet-4.5", [])).toEqual({ ok: false });
   });
 });
 

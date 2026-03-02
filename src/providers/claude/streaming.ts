@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import type { FastifyReply } from "fastify";
 import type { CopilotSession } from "@github/copilot-sdk";
 import type { Logger } from "../../logger.js";
@@ -20,7 +21,7 @@ export function startReply(reply: FastifyReply, model: string): void {
   const messageStart: MessageStartEvent = {
     type: "message_start",
     message: {
-      id: `msg_${String(Date.now())}`,
+      id: `msg_${randomUUID()}`,
       type: "message",
       role: "assistant",
       content: [],
@@ -90,7 +91,7 @@ export class AnthropicProtocol implements StreamProtocol {
   teardown(): void {}
 }
 
-export async function handleAnthropicStreaming(
+export function handleAnthropicStreaming(
   session: CopilotSession,
   prompt: string,
   model: string,

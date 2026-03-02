@@ -28,8 +28,6 @@ const InputItemSchema = z.union([
 ]);
 
 export type InputItem = z.infer<typeof InputItemSchema>;
-export type InputMessage = z.infer<typeof ResponsesInputMessageSchema>;
-export type FunctionCallInput = z.infer<typeof FunctionCallInputSchema>;
 export type FunctionCallOutputInput = z.infer<typeof FunctionCallOutputInputSchema>;
 
 /** Accept any tool shape in the request; we only process function tools. */
@@ -99,9 +97,8 @@ export interface ResponseObject {
   error?: { code: string; message: string } | null;
 }
 
-export function currentTimestamp(): number {
-  return Math.floor(Date.now() / 1000);
-}
+// Re-export from shared so existing consumers don't break
+export { currentTimestamp } from "../shared/streaming-utils.js";
 
 export function genId(prefix: string): string {
   return `${prefix}_${randomUUID()}`;

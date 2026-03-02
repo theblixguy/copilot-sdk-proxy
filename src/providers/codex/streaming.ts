@@ -160,7 +160,7 @@ export class ResponsesProtocol implements StreamProtocol {
   teardown(): void {}
 }
 
-export async function handleResponsesStreaming(
+export function handleResponsesStreaming(
   session: CopilotSession,
   prompt: string,
   model: string,

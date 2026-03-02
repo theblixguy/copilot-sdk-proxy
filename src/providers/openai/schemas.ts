@@ -88,9 +88,8 @@ export interface ModelsResponse {
   data: Model[];
 }
 
-export function currentTimestamp(): number {
-  return Math.floor(Date.now() / 1000);
-}
+// Re-export from shared so existing consumers don't break
+export { currentTimestamp } from "../shared/streaming-utils.js";
 
 // We only support text content, so this rejects anything else early
 // and lets the caller surface a 400.
@@ -123,4 +122,22 @@ export function extractContentText(content: ChatCompletionMessage["content"]): s
   }
 
   return text;
+}
+
+export function extractSystemMessages(messages: ChatCompletionMessage[]): string | undefined {
+  const parts: string[] = [];
+  for (const msg of messages) {
+    if (msg.role !== "system" && msg.role !== "developer") continue;
+    if (msg.content == null) continue;
+    if (typeof msg.content === "string") {
+      parts.push(msg.content);
+    } else if (Array.isArray(msg.content)) {
+      for (const part of msg.content) {
+        if (part.type === "text" && typeof part.text === "string") {
+          parts.push(part.text);
+        }
+      }
+    }
+  }
+  return parts.length > 0 ? parts.join("\n\n") : undefined;
 }

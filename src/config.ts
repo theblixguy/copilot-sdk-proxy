@@ -22,10 +22,12 @@ export type ServerConfig = Omit<RawServerConfig, "bodyLimitMiB"> & {
   bodyLimit: number;
 };
 
+const BYTES_PER_MIB = 1024 * 1024;
+
 const DEFAULT_CONFIG = {
   mcpServers: {},
   allowedCliTools: ["*"],
-  bodyLimit: 10 * 1024 * 1024,
+  bodyLimit: 10 * BYTES_PER_MIB,
   autoApprovePermissions: true,
 } satisfies ServerConfig;
 
@@ -115,7 +117,7 @@ export async function loadConfig(
     allowedCliTools: parsed.allowedCliTools,
     autoApprovePermissions: parsed.autoApprovePermissions,
     reasoningEffort: parsed.reasoningEffort,
-    bodyLimit: parsed.bodyLimitMiB * 1024 * 1024,
+    bodyLimit: parsed.bodyLimitMiB * BYTES_PER_MIB,
     mcpServers: resolveServerPaths(parsed.mcpServers, configDir),
   };
 

@@ -13,7 +13,7 @@ export interface StreamProtocol {
   teardown(): void;
 }
 
-export async function runSessionStreaming(
+export function runSessionStreaming(
   session: CopilotSession,
   prompt: string,
   reply: FastifyReply,
@@ -33,9 +33,9 @@ export async function runSessionStreaming(
 
   const { promise, resolve } = Promise.withResolvers<boolean>();
 
-  const unsubscribe = session.on((event) => {
-    logger.debug(`Session event: ${event.type}`);
+  let deltaCount = 0;
 
+  const unsubscribe = session.on((event) => {
     if (event.type === "tool.execution_start") {
       const d = event.data;
       toolNames.set(d.toolCallId, d.toolName);
@@ -56,20 +56,17 @@ export async function runSessionStreaming(
     switch (event.type) {
       case "assistant.message_delta":
         if (event.data.deltaContent) {
-          logger.debug(`Delta: ${event.data.deltaContent}`);
+          deltaCount++;
           pendingDeltas.push(event.data.deltaContent);
         }
         break;
 
-      case "assistant.message": {
-        logger.debug(`assistant.message: toolRequests=${String(event.data.toolRequests?.length ?? 0)}`);
-        // SDK handles tools internally, just flush text deltas
+      case "assistant.message":
         flushToProtocol();
         break;
-      }
 
       case "session.idle": {
-        logger.info(`Done, wrapping up stream (pendingDeltas=${String(pendingDeltas.length)})`);
+        logger.info(`Done, wrapping up stream (${String(deltaCount)} deltas received)`);
         sessionDone = true;
         flushToProtocol();
         protocol.sendCompleted(reply);

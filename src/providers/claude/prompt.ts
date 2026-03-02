@@ -35,6 +35,8 @@ function formatBlocks(
         parts.push(`[Tool result for ${block.tool_use_id}]: ${text}`);
         break;
       }
+      default:
+        throw block satisfies never;
     }
   }
 }

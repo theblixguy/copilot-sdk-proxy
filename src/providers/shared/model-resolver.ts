@@ -16,13 +16,17 @@ function extractFamily(id: string): string {
   return match?.[1] ?? id;
 }
 
+export type ModelMatch =
+  | { ok: true; model: string }
+  | { ok: false };
+
 export function resolveModel(
   requestedModel: string,
   availableModels: ModelInfo[],
   logger?: Logger,
-): string | undefined {
+): ModelMatch {
   if (availableModels.some((m) => m.id === requestedModel)) {
-    return requestedModel;
+    return { ok: true, model: requestedModel };
   }
 
   const normalizedRequest = normalizeModelId(requestedModel);
@@ -33,7 +37,7 @@ export function resolveModel(
     logger?.debug(
       `Model "${requestedModel}" resolved to "${normalizedMatch.id}" (normalized match)`,
     );
-    return normalizedMatch.id;
+    return { ok: true, model: normalizedMatch.id };
   }
 
   // Requested version may not exist in Copilot yet (e.g. opus 4.6 falls back to opus 4.5),
@@ -56,12 +60,12 @@ export function resolveModel(
     }
   }
 
-  if (!best) return undefined;
+  if (!best) return { ok: false };
 
   logger?.warn(
     `Model "${requestedModel}" not available, falling back to "${best.id}" (closest in family)`,
   );
-  return best.id;
+  return { ok: true, model: best.id };
 }
 
 export type ModelResolution =
@@ -76,8 +80,8 @@ export async function resolveModelForSession(
 ): Promise<ModelResolution> {
   try {
     const models = await service.listModels();
-    const resolved = resolveModel(requestedModel, models, logger);
-    if (!resolved) {
+    const match = resolveModel(requestedModel, models, logger);
+    if (!match.ok) {
       return {
         ok: false,
         error: `Model "${requestedModel}" is not available. Available models: ${models.map((m) => m.id).join(", ")}`,
@@ -86,17 +90,17 @@ export async function resolveModelForSession(
 
     let supportsReasoningEffort = false;
     if (config.reasoningEffort) {
-      const modelInfo = models.find((m) => m.id === resolved);
+      const modelInfo = models.find((m) => m.id === match.model);
       supportsReasoningEffort =
         modelInfo?.capabilities.supports.reasoningEffort ?? false;
       if (!supportsReasoningEffort) {
         logger.debug(
-          `Model "${resolved}" does not support reasoning effort, ignoring config`,
+          `Model "${match.model}" does not support reasoning effort, ignoring config`,
         );
       }
     }
 
-    return { ok: true, model: resolved, supportsReasoningEffort };
+    return { ok: true, model: match.model, supportsReasoningEffort };
   } catch (err) {
     logger.warn("Failed to list models, passing model through as-is:", err);
     return { ok: true, model: requestedModel, supportsReasoningEffort: false };
