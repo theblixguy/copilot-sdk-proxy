@@ -71,10 +71,20 @@ export function runHandlerPipeline<TReq extends { model: string; stream?: boolea
         : `New conversation ${conversation.id}`,
     );
 
-    if (isReuse && conversation.model && normalizeModelId(conversation.model) !== normalizeModelId(req.model)) {
-      logger.warn(
-        `Model mismatch: session uses "${conversation.model}" but request sent "${req.model}" (SDK does not support mid-session model switching)`,
-      );
+    if (isReuse && conversation.session && conversation.model
+        && normalizeModelId(conversation.model) !== normalizeModelId(req.model)) {
+      const resolved = await resolveModelForSession(service, req.model, config, logger);
+      if (resolved.ok) {
+        try {
+          await conversation.session.setModel(resolved.model);
+          logger.info(`Switched model: "${conversation.model}" → "${resolved.model}"`);
+          conversation.model = resolved.model;
+        } catch (err) {
+          logger.warn(`Failed to switch model to "${resolved.model}", continuing with "${conversation.model}":`, err);
+        }
+      } else {
+        logger.warn(`Cannot switch model: ${resolved.error}`);
+      }
     }
 
     if (pipeline.onConversationReady) {
