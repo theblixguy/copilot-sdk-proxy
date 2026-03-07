@@ -5,6 +5,7 @@ import type { Stats } from "../../stats.js";
 import type {
   ResponseObject,
   MessageOutputItem,
+  ReasoningOutputItem,
   OutputItem,
 } from "./schemas.js";
 import { currentTimestamp, genId } from "./schemas.js";
@@ -51,6 +52,9 @@ export function startResponseStream(
 export class ResponsesProtocol implements StreamProtocol {
   protected messageItem: MessageOutputItem | null = null;
   protected messageStarted = false;
+  protected reasoningItem: ReasoningOutputItem | null = null;
+  protected reasoningStarted = false;
+  protected readonly accumulatedReasoning: string[] = [];
   protected outputIndex = 0;
   protected readonly outputItems: OutputItem[] = [];
   protected readonly accumulatedText: string[] = [];
@@ -130,6 +134,73 @@ export class ResponsesProtocol implements StreamProtocol {
       output: this.outputItems,
     };
     sendEvent(r, `response.${status}`, { response }, nextSeq(this.seq));
+  }
+
+  protected ensureReasoningItem(r: FastifyReply): void {
+    if (!this.reasoningStarted) {
+      this.closeMessageItem(r);
+      this.reasoningItem = {
+        type: "reasoning",
+        id: genId("rs"),
+        summary: [],
+        status: "in_progress",
+      };
+      sendEvent(r, "response.output_item.added", {
+        output_index: this.outputIndex,
+        item: this.reasoningItem,
+      }, nextSeq(this.seq));
+      sendEvent(r, "response.reasoning_summary_part.added", {
+        item_id: this.reasoningItem.id,
+        output_index: this.outputIndex,
+        summary_index: 0,
+        part: { type: "summary_text", text: "" },
+      }, nextSeq(this.seq));
+      this.reasoningStarted = true;
+    }
+  }
+
+  flushReasoningDeltas(r: FastifyReply, deltas: string[]): void {
+    this.ensureReasoningItem(r);
+    if (!this.reasoningItem) return;
+    for (const text of deltas) {
+      sendEvent(r, "response.reasoning_summary_text.delta", {
+        item_id: this.reasoningItem.id,
+        output_index: this.outputIndex,
+        summary_index: 0,
+        delta: text,
+      }, nextSeq(this.seq));
+      this.accumulatedReasoning.push(text);
+    }
+  }
+
+  reasoningComplete(r: FastifyReply): void {
+    if (!this.reasoningStarted || !this.reasoningItem) return;
+
+    const fullText = this.accumulatedReasoning.join("");
+    sendEvent(r, "response.reasoning_summary_text.done", {
+      item_id: this.reasoningItem.id,
+      output_index: this.outputIndex,
+      summary_index: 0,
+      text: fullText,
+    }, nextSeq(this.seq));
+    sendEvent(r, "response.reasoning_summary_part.done", {
+      item_id: this.reasoningItem.id,
+      output_index: this.outputIndex,
+      summary_index: 0,
+      part: { type: "summary_text", text: fullText },
+    }, nextSeq(this.seq));
+
+    this.reasoningItem.status = "completed";
+    this.reasoningItem.summary = [{ type: "summary_text", text: fullText }];
+    this.outputItems.push(this.reasoningItem);
+    sendEvent(r, "response.output_item.done", {
+      output_index: this.outputIndex,
+      item: this.reasoningItem,
+    }, nextSeq(this.seq));
+
+    this.outputIndex++;
+    this.reasoningStarted = false;
+    this.reasoningItem = null;
   }
 
   flushDeltas(r: FastifyReply, deltas: string[]): void {

@@ -45,21 +45,23 @@ export interface MessageStartEvent {
 }
 
 export type TextContentBlock = { type: "text"; text: "" };
+export type ThinkingContentBlock = { type: "thinking"; thinking: "" };
 export type ToolUseContentBlock = { type: "tool_use"; id: string; name: string; input: Record<string, unknown> };
 
 export interface ContentBlockStartEvent {
   type: "content_block_start";
   index: number;
-  content_block: TextContentBlock | ToolUseContentBlock;
+  content_block: TextContentBlock | ThinkingContentBlock | ToolUseContentBlock;
 }
 
 export type TextDelta = { type: "text_delta"; text: string };
+export type ThinkingDelta = { type: "thinking_delta"; thinking: string };
 export type InputJsonDelta = { type: "input_json_delta"; partial_json: string };
 
 export interface ContentBlockDeltaEvent {
   type: "content_block_delta";
   index: number;
-  delta: TextDelta | InputJsonDelta;
+  delta: TextDelta | ThinkingDelta | InputJsonDelta;
 }
 
 export interface ContentBlockStopEvent {

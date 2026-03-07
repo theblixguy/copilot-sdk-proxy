@@ -8,6 +8,8 @@ import { formatCompaction, recordUsageEvent } from "./streaming-utils.js";
 // No tool bridge logic here, the SDK handles tools natively.
 export interface StreamProtocol {
   flushDeltas(reply: FastifyReply, deltas: string[]): void;
+  flushReasoningDeltas?(reply: FastifyReply, deltas: string[]): void;
+  reasoningComplete?(reply: FastifyReply): void;
   sendCompleted(reply: FastifyReply): void;
   sendFailed(reply: FastifyReply): void;
   teardown(): void;
@@ -22,8 +24,15 @@ export function runSessionStreaming(
   stats: Stats,
 ): Promise<boolean> {
   let pendingDeltas: string[] = [];
+  let pendingReasoningDeltas: string[] = [];
   let sessionDone = false;
   const toolNames = new Map<string, string>();
+
+  function flushReasoningToProtocol(): void {
+    if (pendingReasoningDeltas.length === 0) return;
+    protocol.flushReasoningDeltas?.(reply, pendingReasoningDeltas);
+    pendingReasoningDeltas = [];
+  }
 
   function flushToProtocol(): void {
     if (pendingDeltas.length === 0) return;
@@ -54,6 +63,17 @@ export function runSessionStreaming(
     }
 
     switch (event.type) {
+      case "assistant.reasoning_delta":
+        if (event.data.deltaContent) {
+          pendingReasoningDeltas.push(event.data.deltaContent);
+        }
+        break;
+
+      case "assistant.reasoning":
+        flushReasoningToProtocol();
+        protocol.reasoningComplete?.(reply);
+        break;
+
       case "assistant.message_delta":
         if (event.data.deltaContent) {
           deltaCount++;

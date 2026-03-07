@@ -34,25 +34,48 @@ export function startReply(reply: FastifyReply, model: string): void {
 }
 
 export class AnthropicProtocol implements StreamProtocol {
+  protected thinkingBlockStarted = false;
   protected textBlockStarted = false;
+  protected nextBlockIndex = 0;
+  private textBlockIndex = 0;
+  private thinkingBlockIndex = 0;
+
+  protected closeTextBlock(r: FastifyReply): void {
+    if (this.textBlockStarted) {
+      sendEvent(r, "content_block_stop", {
+        type: "content_block_stop",
+        index: this.textBlockIndex,
+      } satisfies ContentBlockStopEvent);
+      this.nextBlockIndex = this.textBlockIndex + 1;
+      this.textBlockStarted = false;
+    }
+  }
+
+  protected ensureThinkingBlock(r: FastifyReply): void {
+    if (!this.thinkingBlockStarted) {
+      this.closeTextBlock(r);
+      this.thinkingBlockIndex = this.nextBlockIndex;
+      const blockStart: ContentBlockStartEvent = {
+        type: "content_block_start",
+        index: this.thinkingBlockIndex,
+        content_block: { type: "thinking", thinking: "" },
+      };
+      sendEvent(r, "content_block_start", blockStart);
+      this.thinkingBlockStarted = true;
+    }
+  }
 
   protected ensureTextBlock(r: FastifyReply): void {
     if (!this.textBlockStarted) {
+      this.textBlockIndex = this.nextBlockIndex;
       const blockStart: ContentBlockStartEvent = {
         type: "content_block_start",
-        index: 0,
+        index: this.textBlockIndex,
         content_block: { type: "text", text: "" },
       };
       sendEvent(r, "content_block_start", blockStart);
       this.textBlockStarted = true;
     }
-  }
-
-  protected sendBlockStop(r: FastifyReply): void {
-    sendEvent(r, "content_block_stop", {
-      type: "content_block_stop",
-      index: 0,
-    } satisfies ContentBlockStopEvent);
   }
 
   protected sendEpilogue(r: FastifyReply, stopReason: string): void {
@@ -65,12 +88,35 @@ export class AnthropicProtocol implements StreamProtocol {
     sendEvent(r, "message_stop", { type: "message_stop" } satisfies MessageStopEvent);
   }
 
+  flushReasoningDeltas(r: FastifyReply, deltas: string[]): void {
+    this.ensureThinkingBlock(r);
+    for (const thinking of deltas) {
+      const delta: ContentBlockDeltaEvent = {
+        type: "content_block_delta",
+        index: this.thinkingBlockIndex,
+        delta: { type: "thinking_delta", thinking },
+      };
+      sendEvent(r, "content_block_delta", delta);
+    }
+  }
+
+  reasoningComplete(r: FastifyReply): void {
+    if (this.thinkingBlockStarted) {
+      sendEvent(r, "content_block_stop", {
+        type: "content_block_stop",
+        index: this.thinkingBlockIndex,
+      } satisfies ContentBlockStopEvent);
+      this.nextBlockIndex = this.thinkingBlockIndex + 1;
+      this.thinkingBlockStarted = false;
+    }
+  }
+
   flushDeltas(r: FastifyReply, deltas: string[]): void {
     this.ensureTextBlock(r);
     for (const text of deltas) {
       const delta: ContentBlockDeltaEvent = {
         type: "content_block_delta",
-        index: 0,
+        index: this.textBlockIndex,
         delta: { type: "text_delta", text },
       };
       sendEvent(r, "content_block_delta", delta);
@@ -79,12 +125,20 @@ export class AnthropicProtocol implements StreamProtocol {
 
   sendCompleted(r: FastifyReply): void {
     this.ensureTextBlock(r);
-    this.sendBlockStop(r);
+    sendEvent(r, "content_block_stop", {
+      type: "content_block_stop",
+      index: this.textBlockIndex,
+    } satisfies ContentBlockStopEvent);
     this.sendEpilogue(r, "end_turn");
   }
 
   sendFailed(r: FastifyReply): void {
-    if (this.textBlockStarted) this.sendBlockStop(r);
+    if (this.textBlockStarted) {
+      sendEvent(r, "content_block_stop", {
+        type: "content_block_stop",
+        index: this.textBlockIndex,
+      } satisfies ContentBlockStopEvent);
+    }
     this.sendEpilogue(r, "end_turn");
   }
 

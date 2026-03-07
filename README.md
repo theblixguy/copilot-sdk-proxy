@@ -37,9 +37,9 @@ The `--provider` flag picks which API the server exposes:
 
 | Provider | Flag | Routes |
 |----------|------|--------|
-| OpenAI | `--provider openai` (default) | `GET /v1/models`, `POST /v1/chat/completions` |
-| Claude | `--provider claude` | `POST /v1/messages`, `POST /v1/messages/count_tokens` |
-| Codex | `--provider codex` | `POST /v1/responses` |
+| OpenAI `/chat/completions` | `--provider openai` (default) | `GET /v1/models`, `POST /v1/chat/completions` |
+| Anthropic `/messages` | `--provider claude` | `POST /v1/messages`, `POST /v1/messages/count_tokens` |
+| OpenAI `/responses` | `--provider codex` | `POST /v1/responses` |
 
 ```bash
 copilot-proxy --provider claude
@@ -47,6 +47,16 @@ copilot-proxy --provider codex --port 9090
 ```
 
 All three stream responses as server-sent events. The Copilot SDK handles tool execution internally through its built-in CLI tools.
+
+### Feature support
+
+| Feature | `/chat/completions` | `/messages` | `/responses` |
+|---------|---------------------|-------------|--------------|
+| Streaming (SSE) | Yes | Yes | Yes |
+| Tool execution | Yes | Yes | Yes |
+| Reasoning/thinking tokens | No (hidden by API) | Yes (thinking blocks) | Yes (reasoning summary) |
+| Token counting | No | Yes (`POST /v1/messages/count_tokens`) | No |
+| Model listing | Yes (`GET /v1/models`) | No | No |
 
 A `GET /health` endpoint is available on all providers. It pings the Copilot SDK backend and returns `{"status":"ok","message":"...","timestamp":...,"protocolVersion":...}` on success or a 503 with `{"status":"error","message":"..."}` on failure.
 

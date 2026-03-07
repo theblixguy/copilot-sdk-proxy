@@ -85,7 +85,19 @@ export interface FunctionCallOutputItem {
   status: "in_progress" | "completed";
 }
 
-export type OutputItem = MessageOutputItem | FunctionCallOutputItem;
+export interface ReasoningSummary {
+  type: "summary_text";
+  text: string;
+}
+
+export interface ReasoningOutputItem {
+  type: "reasoning";
+  id: string;
+  summary: ReasoningSummary[];
+  status: "in_progress" | "completed";
+}
+
+export type OutputItem = MessageOutputItem | FunctionCallOutputItem | ReasoningOutputItem;
 
 export interface ResponseObject {
   id: string;
