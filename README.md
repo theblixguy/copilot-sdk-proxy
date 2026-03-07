@@ -72,7 +72,20 @@ The config file uses [JSON5](https://json5.org/) format:
 
 ```json5
 {
-  // MCP servers to connect to the Copilot SDK.
+  // MCP servers to connect to the Copilot SDK. Example:
+  // mcpServers: {
+  //   filesystem: {
+  //     type: "local",
+  //     command: "npx",
+  //     args: ["-y", "@modelcontextprotocol/server-filesystem", "/Users/me/projects"],
+  //   },
+  //   github: {
+  //     type: "http",
+  //     url: "https://api.githubcopilot.com/mcp",
+  //     headers: { Authorization: "Bearer ghp_xxx" },
+  //     timeout: 30, // seconds
+  //   },
+  // },
   mcpServers: {},
 
   // Built-in Copilot CLI tools allowlist. Use ["*"] to allow all, [] to deny
@@ -80,7 +93,10 @@ The config file uses [JSON5](https://json5.org/) format:
   allowedCliTools: ["*"],
 
   // Maximum request body size in MiB.
-  bodyLimitMiB: 10,
+  bodyLimit: 10,
+
+  // Server-level request timeout in minutes. 0: disabled.
+  requestTimeout: 0,
 
   // Reasoning effort for models that support it: "low", "medium", "high", "xhigh".
   // reasoningEffort: null,

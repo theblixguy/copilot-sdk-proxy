@@ -26,6 +26,8 @@ export async function createServer(
     },
   });
 
+  app.server.requestTimeout = ctx.config.requestTimeoutMs;
+
   await app.register(cors, {
     origin: "*",
     methods: ["GET", "POST", "OPTIONS"],

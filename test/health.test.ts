@@ -22,6 +22,7 @@ function createCtx(
       mcpServers: {},
       allowedCliTools: [],
       bodyLimit: 10 * 1024 * 1024,
+      requestTimeoutMs: 0,
       autoApprovePermissions: true,
     },
     port: 0,

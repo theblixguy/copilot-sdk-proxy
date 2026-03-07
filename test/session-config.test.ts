@@ -8,6 +8,7 @@ function defaultConfig(overrides?: Partial<ServerConfig>): ServerConfig {
     mcpServers: {},
     allowedCliTools: [],
     bodyLimit: 10 * 1024 * 1024,
+    requestTimeoutMs: 0,
     autoApprovePermissions: true,
     ...overrides,
   };

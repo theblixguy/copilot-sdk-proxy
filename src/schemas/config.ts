@@ -43,11 +43,15 @@ export const ServerConfigSchema = z.object({
     (arr) => !arr.includes("*") || arr.length === 1,
     'allowedCliTools: use ["*"] alone to allow all tools, don\'t mix with other entries',
   ).default([]),
-  bodyLimitMiB: z
+  bodyLimit: z
     .number()
     .positive()
-    .max(100, "bodyLimitMiB cannot exceed 100")
+    .max(100, "bodyLimit cannot exceed 100")
     .default(10),
+  requestTimeout: z
+    .number()
+    .min(0, "requestTimeout must be >= 0")
+    .default(0),
   reasoningEffort: ReasoningEffortSchema.optional(),
   autoApprovePermissions: ApprovalRuleSchema.default(true),
 });
