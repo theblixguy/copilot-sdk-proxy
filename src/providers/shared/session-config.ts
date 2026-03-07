@@ -68,7 +68,7 @@ export function createSessionConfig({
       return Promise.resolve(
         approved
           ? { kind: "approved" as const }
-          : { kind: "denied-by-rules" as const },
+          : { kind: "denied-by-rules" as const, rules: [] },
       );
     },
 
