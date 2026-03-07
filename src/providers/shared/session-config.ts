@@ -25,6 +25,7 @@ export function createSessionConfig({
   cwd,
 }: SessionConfigOptions): SessionConfig {
   return {
+    clientName: "copilot-sdk-proxy",
     model,
     streaming: true,
     infiniteSessions: { enabled: true },
