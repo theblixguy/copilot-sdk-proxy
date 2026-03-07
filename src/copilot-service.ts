@@ -46,6 +46,10 @@ export class CopilotService {
     return this.client.getAuthStatus();
   }
 
+  async ping(message?: string): Promise<{ message: string; timestamp: number; protocolVersion?: number }> {
+    return this.client.ping(message);
+  }
+
   async listModels(): Promise<ModelInfo[]> {
     if (this.cachedModels && Date.now() - this.cachedModelsAt < MODEL_CACHE_TTL_MS) {
       return this.cachedModels;

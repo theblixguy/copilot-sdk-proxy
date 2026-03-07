@@ -48,6 +48,8 @@ copilot-proxy --provider codex --port 9090
 
 All three stream responses as server-sent events. The Copilot SDK handles tool execution internally through its built-in CLI tools.
 
+A `GET /health` endpoint is available on all providers. It pings the Copilot SDK backend and returns `{"status":"ok","message":"...","timestamp":...,"protocolVersion":...}` on success or a 503 with `{"status":"error","message":"..."}` on failure.
+
 ## Configuration
 
 The server reads a `config.json5` file. It ships with a default one, but you can point to your own with `--config`:

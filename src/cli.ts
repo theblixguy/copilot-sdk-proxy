@@ -100,7 +100,7 @@ async function startServer(options: StartOptions): Promise<void> {
       port,
       provider: providerName,
       providerName: provider.name,
-      routes: provider.routes,
+      routes: [...provider.routes, "GET /health"],
       cwd: service.cwd,
     });
   }
