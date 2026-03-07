@@ -83,7 +83,7 @@ describe("loadConfig", () => {
   it("parses a valid config", async () => {
     mockReadFile.mockResolvedValue(JSON.stringify({
       allowedCliTools: ["glob"],
-      bodyLimitMiB: 5,
+      bodyLimit: 5,
       autoApprovePermissions: false,
     }) as never);
 
@@ -115,7 +115,7 @@ describe("loadConfig", () => {
 
   it("rejects invalid config schema", async () => {
     mockReadFile.mockResolvedValue(JSON.stringify({
-      bodyLimitMiB: -5,
+      bodyLimit: -5,
     }) as never);
 
     await expect(loadConfig("/invalid-schema.json5", logger)).rejects.toThrow("Invalid config");

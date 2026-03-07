@@ -17,17 +17,19 @@ export type {
   ReasoningEffort,
 } from "./schemas/config.js";
 
-export type ServerConfig = Omit<RawServerConfig, "bodyLimitMiB"> & {
+export type ServerConfig = Omit<RawServerConfig, "requestTimeout"> & {
   mcpServers: Record<string, MCPServer>;
-  bodyLimit: number;
+  requestTimeoutMs: number;
 };
 
 const BYTES_PER_MIB = 1024 * 1024;
+const MS_PER_MINUTE = 60_000;
 
 const DEFAULT_CONFIG = {
   mcpServers: {},
   allowedCliTools: ["*"],
   bodyLimit: 10 * BYTES_PER_MIB,
+  requestTimeoutMs: 0,
   autoApprovePermissions: true,
 } satisfies ServerConfig;
 
@@ -117,7 +119,8 @@ export async function loadConfig(
     allowedCliTools: parsed.allowedCliTools,
     autoApprovePermissions: parsed.autoApprovePermissions,
     reasoningEffort: parsed.reasoningEffort,
-    bodyLimit: parsed.bodyLimitMiB * BYTES_PER_MIB,
+    bodyLimit: parsed.bodyLimit * BYTES_PER_MIB,
+    requestTimeoutMs: parsed.requestTimeout * MS_PER_MINUTE,
     mcpServers: resolveServerPaths(parsed.mcpServers, configDir),
   };
 

@@ -6,7 +6,7 @@ describe("ServerConfigSchema", () => {
     const result = ServerConfigSchema.parse({});
     expect(result.mcpServers).toEqual({});
     expect(result.allowedCliTools).toEqual([]);
-    expect(result.bodyLimitMiB).toBe(10);
+    expect(result.bodyLimit).toBe(10);
     expect(result.autoApprovePermissions).toBe(true);
   });
 
@@ -20,13 +20,13 @@ describe("ServerConfigSchema", () => {
         },
       },
       allowedCliTools: ["glob", "grep"],
-      bodyLimitMiB: 5,
+      bodyLimit: 5,
       reasoningEffort: "high",
       autoApprovePermissions: ["read", "write"],
     });
     expect(result.mcpServers.test).toBeDefined();
     expect(result.allowedCliTools).toEqual(["glob", "grep"]);
-    expect(result.bodyLimitMiB).toBe(5);
+    expect(result.bodyLimit).toBe(5);
     expect(result.reasoningEffort).toBe("high");
     expect(result.autoApprovePermissions).toEqual(["read", "write"]);
   });
@@ -70,13 +70,13 @@ describe("ServerConfigSchema", () => {
     expect(result.mcpServers.stdio).toBeDefined();
   });
 
-  it("rejects bodyLimitMiB exceeding 100", () => {
-    const result = ServerConfigSchema.safeParse({ bodyLimitMiB: 200 });
+  it("rejects bodyLimit exceeding 100", () => {
+    const result = ServerConfigSchema.safeParse({ bodyLimit: 200 });
     expect(result.success).toBe(false);
   });
 
-  it("rejects negative bodyLimitMiB", () => {
-    const result = ServerConfigSchema.safeParse({ bodyLimitMiB: -1 });
+  it("rejects negative bodyLimit", () => {
+    const result = ServerConfigSchema.safeParse({ bodyLimit: -1 });
     expect(result.success).toBe(false);
   });
 
@@ -122,6 +122,26 @@ describe("ServerConfigSchema", () => {
         bad: { type: "local", command: "", args: [] },
       },
     });
+    expect(result.success).toBe(false);
+  });
+
+  it("defaults requestTimeout to 0", () => {
+    const result = ServerConfigSchema.parse({});
+    expect(result.requestTimeout).toBe(0);
+  });
+
+  it("accepts valid requestTimeout in minutes", () => {
+    const result = ServerConfigSchema.parse({ requestTimeout: 5 });
+    expect(result.requestTimeout).toBe(5);
+  });
+
+  it("accepts fractional requestTimeout", () => {
+    const result = ServerConfigSchema.parse({ requestTimeout: 0.5 });
+    expect(result.requestTimeout).toBe(0.5);
+  });
+
+  it("rejects negative requestTimeout", () => {
+    const result = ServerConfigSchema.safeParse({ requestTimeout: -1 });
     expect(result.success).toBe(false);
   });
 });

@@ -89,6 +89,7 @@ function createCtx(overrides?: { listModels?: () => Promise<ModelInfo[]> }): App
       allowedCliTools: ["*"],
       autoApprovePermissions: true,
       bodyLimit: 10 * 1024 * 1024,
+      requestTimeoutMs: 0,
       mcpServers: {},
     },
     port: 8080,
