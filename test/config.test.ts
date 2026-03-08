@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { loadConfig, resolveConfigPath } from "../src/config.js";
+import { loadConfig, loadAllProviderConfigs, resolveConfigPath } from "../src/config.js";
 import { Logger } from "../src/logger.js";
 
 vi.mock("node:fs", () => ({
@@ -136,5 +136,51 @@ describe("loadConfig", () => {
     }) as never);
 
     await expect(loadConfig("/invalid-schema.json5", logger, "openai")).rejects.toThrow("Invalid config");
+  });
+});
+
+describe("loadAllProviderConfigs", () => {
+  const logger = new Logger("none");
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("returns defaults for all providers when config file does not exist", async () => {
+    const err = new Error("ENOENT") as NodeJS.ErrnoException;
+    err.code = "ENOENT";
+    mockReadFile.mockRejectedValue(err);
+
+    const result = await loadAllProviderConfigs("/missing.json5", logger);
+    for (const name of ["openai", "claude", "codex"] as const) {
+      expect(result.providers[name].allowedCliTools).toEqual(["*"]);
+      expect(result.providers[name].mcpServers).toEqual({});
+    }
+    expect(result.shared.mcpServers).toEqual({});
+  });
+
+  it("gives each provider its own MCP servers", async () => {
+    mockReadFile.mockResolvedValue(JSON.stringify({
+      openai: { mcpServers: { a: { type: "local", command: "node", args: [] } } },
+      claude: { mcpServers: { b: { type: "local", command: "python", args: [] } } },
+    }) as never);
+
+    const result = await loadAllProviderConfigs("/project/config.json5", logger);
+    expect(Object.keys(result.providers.openai.mcpServers)).toEqual(["a"]);
+    expect(Object.keys(result.providers.claude.mcpServers)).toEqual(["b"]);
+    expect(result.providers.codex.mcpServers).toEqual({});
+  });
+
+  it("shared config has empty mcpServers and shared settings", async () => {
+    mockReadFile.mockResolvedValue(JSON.stringify({
+      allowedCliTools: ["glob"],
+      bodyLimit: 5,
+      openai: { mcpServers: { a: { type: "local", command: "node", args: [] } } },
+    }) as never);
+
+    const result = await loadAllProviderConfigs("/project/config.json5", logger);
+    expect(result.shared.mcpServers).toEqual({});
+    expect(result.shared.allowedCliTools).toEqual(["glob"]);
+    expect(result.shared.bodyLimit).toBe(5 * 1024 * 1024);
   });
 });

@@ -36,14 +36,17 @@ export { Logger, LEVEL_PRIORITY, type LogLevel } from "./logger.js";
 // Config
 export {
   loadConfig,
+  loadAllProviderConfigs,
   resolveConfigPath,
   type ServerConfig,
+  type AllProviderConfigs,
   type MCPLocalServer,
   type MCPRemoteServer,
   type MCPServer,
   type ApprovalRule,
   type ReasoningEffort,
   type ProviderName,
+  type ProviderMode,
 } from "./config.js";
 export {
   ServerConfigSchema,
@@ -79,7 +82,7 @@ export {
 
 // Provider types and registry
 export { type Provider } from "./providers/types.js";
-export { providers } from "./providers/index.js";
+export { providers, createAutoProvider } from "./providers/index.js";
 
 // OpenAI provider
 export {

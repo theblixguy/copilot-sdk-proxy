@@ -5,6 +5,7 @@ import JSON5 from "json5";
 import type { Logger } from "./logger.js";
 import {
   ServerConfigSchema,
+  PROVIDER_NAMES,
   type ProviderName,
   type MCPServer,
   type RawServerConfig,
@@ -18,6 +19,8 @@ export type {
   ReasoningEffort,
   ProviderName,
 } from "./schemas/config.js";
+
+export type { ProviderMode } from "./schemas/config.js";
 
 export type ServerConfig = Omit<RawServerConfig, ProviderName | "requestTimeout"> & {
   mcpServers: Record<string, MCPServer>;
@@ -146,4 +149,30 @@ export async function loadConfig(
   const result = await parseConfigFile(configPath, logger);
   if (!result) return DEFAULT_CONFIG;
   return buildServerConfig(result.data, result.configDir, provider);
+}
+
+export type AllProviderConfigs = {
+  providers: Record<ProviderName, ServerConfig>;
+  shared: ServerConfig;
+};
+
+export async function loadAllProviderConfigs(
+  configPath: string,
+  logger: Logger,
+): Promise<AllProviderConfigs> {
+  const result = await parseConfigFile(configPath, logger);
+  const providers = Object.fromEntries(
+    PROVIDER_NAMES.map((name) => [
+      name,
+      result ? buildServerConfig(result.data, result.configDir, name) : DEFAULT_CONFIG,
+    ]),
+  ) as Record<ProviderName, ServerConfig>;
+
+  // Reuse buildServerConfig for shared fields, override mcpServers to empty.
+  // The provider arg is arbitrary since shared fields are provider-independent.
+  const shared: ServerConfig = result
+    ? { ...buildServerConfig(result.data, result.configDir, "openai"), mcpServers: {} }
+    : DEFAULT_CONFIG;
+
+  return { providers, shared };
 }

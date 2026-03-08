@@ -43,6 +43,7 @@ export const ProviderConfigSchema = z.object({
 
 export const PROVIDER_NAMES = ["openai", "claude", "codex"] as const;
 export type ProviderName = (typeof PROVIDER_NAMES)[number];
+export type ProviderMode = ProviderName | "auto";
 
 const PROVIDER_DEFAULTS = { mcpServers: {} };
 

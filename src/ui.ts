@@ -1,6 +1,7 @@
 import pc from "picocolors";
 import readline from "node:readline";
 import type { StatsSnapshot } from "./stats.js";
+import type { ProviderMode } from "./schemas/config.js";
 
 export const bold = pc.bold;
 export const dim = pc.dim;
@@ -70,15 +71,18 @@ export function createSpinner(text: string): Spinner {
 
 export interface BannerInfo {
   port: number;
-  provider: string;
+  provider: ProviderMode;
   providerName: string;
   routes: string[];
   cwd: string;
 }
 
 export function printBanner(info: BannerInfo): void {
+  const providerHint = info.provider === "auto"
+    ? dim("(default)")
+    : dim(`(--provider ${info.provider})`);
   console.log();
-  console.log(`  ${dim("Provider")}   ${info.providerName} ${dim(`(--provider ${info.provider})`)}`);
+  console.log(`  ${dim("Provider")}   ${info.providerName} ${providerHint}`);
   console.log(`  ${dim("Routes")}     ${info.routes.join(dim(", "))}`);
   console.log(`  ${dim("Directory")}  ${info.cwd}`);
   console.log();

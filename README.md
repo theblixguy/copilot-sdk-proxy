@@ -29,20 +29,22 @@ npm install -g copilot-sdk-proxy
 copilot-proxy
 ```
 
-By default the server starts on port 8080 with the OpenAI provider. Point your client at `http://localhost:8080` and it will proxy requests through the Copilot SDK.
+By default the server starts on port 8080 in auto mode, which registers all three providers at once. Point your client at `http://localhost:8080` and it will proxy requests through the Copilot SDK.
 
 ## Providers
 
-The `--provider` flag picks which API the server exposes:
+The server runs in **auto mode** by default, which registers all three providers simultaneously. You can also run a single provider with `--provider`:
 
 | Provider | Flag | Routes |
 |----------|------|--------|
-| OpenAI `/chat/completions` | `--provider openai` (default) | `GET /v1/models`, `POST /v1/chat/completions` |
+| All (auto) | _(default)_ | All routes below |
+| OpenAI `/chat/completions` | `--provider openai` | `GET /v1/models`, `POST /v1/chat/completions` |
 | Anthropic `/messages` | `--provider claude` | `POST /v1/messages`, `POST /v1/messages/count_tokens` |
 | OpenAI `/responses` | `--provider codex` | `POST /v1/responses` |
 
 ```bash
-copilot-proxy --provider claude
+copilot-proxy                          # auto mode: all providers
+copilot-proxy --provider claude        # single provider
 copilot-proxy --provider codex --port 9090
 ```
 
@@ -72,21 +74,19 @@ The config file uses [JSON5](https://json5.org/) format:
 
 ```json5
 {
-  // MCP servers to connect to the Copilot SDK. Example:
-  // mcpServers: {
-  //   filesystem: {
-  //     type: "local",
-  //     command: "npx",
-  //     args: ["-y", "@modelcontextprotocol/server-filesystem", "/Users/me/projects"],
-  //   },
-  //   github: {
-  //     type: "http",
-  //     url: "https://api.githubcopilot.com/mcp",
-  //     headers: { Authorization: "Bearer ghp_xxx" },
-  //     timeout: 30, // seconds
+  // Per-provider MCP servers. Each provider gets its own set.
+  // openai: {
+  //   mcpServers: {
+  //     filesystem: {
+  //       type: "local",
+  //       command: "npx",
+  //       args: ["-y", "@modelcontextprotocol/server-filesystem", "/Users/me/projects"],
+  //     },
   //   },
   // },
-  mcpServers: {},
+  openai: { mcpServers: {} },
+  claude: { mcpServers: {} },
+  codex: { mcpServers: {} },
 
   // Built-in Copilot CLI tools allowlist. Use ["*"] to allow all, [] to deny
   // all, or list specific tools like ["glob", "grep", "bash"].
@@ -107,6 +107,8 @@ The config file uses [JSON5](https://json5.org/) format:
 }
 ```
 
+In auto mode, all three provider sections are active. In single-provider mode (`--provider`), only the specified provider's MCP servers are used. Settings like `allowedCliTools`, `bodyLimit`, and `autoApprovePermissions` are shared across all providers.
+
 ## CLI reference
 
 ```text
@@ -114,7 +116,7 @@ copilot-proxy [options]
 
 Options:
   -p, --port <number>            Port to listen on (default: 8080)
-  --provider <name>              API format: openai, claude, codex (default: openai)
+  --provider <name>              API format: openai, claude, codex (default: auto: all providers)
   -l, --log-level <level>        Log verbosity (default: info)
   -c, --config <path>            Path to config file
   --cwd <path>                   Working directory for Copilot sessions
@@ -163,6 +165,8 @@ Some of the main exports:
 - `CopilotService` -- manages the SDK lifecycle and authentication
 - `createServer` -- builds a Fastify server with provider-specific routes
 - `providers` -- registry of `openai`, `claude`, and `codex` with their schemas, prompt formatters, and streaming handlers
+- `createAutoProvider` -- registers all three providers on a single server (auto mode)
+- `loadAllProviderConfigs` -- loads per-provider configs from a single config file
 - `createSessionConfig` -- builds SDK session configs (MCP servers, permissions, reasoning effort)
 - `resolveModelForSession` -- model resolution with family-based fallback
 - `Logger`, `Stats`, `createSpinner`, `printBanner`, `printUsageSummary`

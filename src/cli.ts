@@ -4,12 +4,15 @@ import { readFile } from "node:fs/promises";
 import { z } from "zod";
 import { Command } from "commander";
 import { CopilotService } from "./copilot-service.js";
-import { loadConfig, resolveConfigPath } from "./config.js";
+import { loadConfig, loadAllProviderConfigs, resolveConfigPath } from "./config.js";
+import type { AllProviderConfigs, ServerConfig } from "./config.js";
 import { createServer } from "./server.js";
 import { Logger } from "./logger.js";
 import { Stats } from "./stats.js";
-import { providers, type ProviderName } from "./providers/index.js";
+import { providers, createAutoProvider } from "./providers/index.js";
+import type { Provider } from "./providers/types.js";
 import type { AppContext } from "./context.js";
+import type { ProviderMode } from "./schemas/config.js";
 import {
   parsePort,
   parseLogLevel,
@@ -27,24 +30,35 @@ const { version } = z.object({ version: z.string() }).parse(
 
 interface StartOptions {
   port: string;
-  provider: string;
+  provider?: string;
   logLevel: string;
   config?: string;
   cwd?: string;
   idleTimeout?: string;
 }
 
+async function loadProvider(
+  mode: ProviderMode,
+  configPath: string,
+  logger: Logger,
+): Promise<{ provider: Provider; config: ServerConfig; allConfigs?: AllProviderConfigs }> {
+  if (mode === "auto") {
+    const allConfigs = await loadAllProviderConfigs(configPath, logger);
+    return { provider: createAutoProvider(allConfigs.providers), config: allConfigs.shared, allConfigs };
+  }
+  const config = await loadConfig(configPath, logger, mode);
+  return { provider: providers[mode], config };
+}
+
 async function startServer(options: StartOptions): Promise<void> {
   const logLevel = parseLogLevel(options.logLevel);
   const logger = new Logger(logLevel);
   const port = parsePort(options.port);
-  const providerName: ProviderName = parseProvider(options.provider);
+  const mode: ProviderMode = options.provider ? parseProvider(options.provider) : "auto";
   const idleTimeoutMinutes = options.idleTimeout ? parseIdleTimeout(options.idleTimeout) : 0;
 
-  const provider = providers[providerName];
-
   const configPath = options.config ?? resolveConfigPath(options.cwd, process.cwd(), DEFAULT_CONFIG_PATH);
-  const config = await loadConfig(configPath, logger, providerName);
+  const { provider, config, allConfigs } = await loadProvider(mode, configPath, logger);
   const cwd = options.cwd;
 
   const service = new CopilotService({
@@ -98,7 +112,7 @@ async function startServer(options: StartOptions): Promise<void> {
   if (!quiet) {
     printBanner({
       port,
-      provider: providerName,
+      provider: mode,
       providerName: provider.name,
       routes: [...provider.routes, "GET /health"],
       cwd: service.cwd,
@@ -106,7 +120,9 @@ async function startServer(options: StartOptions): Promise<void> {
   }
 
   logger.debug(`Config loaded from ${configPath}`);
-  const mcpCount = Object.keys(config.mcpServers).length;
+  const mcpCount = allConfigs
+    ? Object.values(allConfigs.providers).reduce((sum, c) => sum + Object.keys(c.mcpServers).length, 0)
+    : Object.keys(config.mcpServers).length;
   const cliToolsSummary = config.allowedCliTools.includes("*")
     ? "all CLI tools allowed"
     : `${String(config.allowedCliTools.length)} allowed CLI tool(s)`;
@@ -175,7 +191,7 @@ program
   .command("start", { isDefault: true })
   .description("Start the proxy server")
   .option("-p, --port <number>", "port to listen on", "8080")
-  .option("--provider <name>", "API format: openai, claude, codex", "openai")
+  .option("--provider <name>", "run a single provider: openai, claude, codex")
   .option("-l, --log-level <level>", "log verbosity", "info")
   .option("-c, --config <path>", "path to config file")
   .option("--cwd <path>", "working directory for Copilot sessions")
