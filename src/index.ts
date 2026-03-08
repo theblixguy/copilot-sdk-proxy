@@ -44,7 +44,15 @@ export {
   type ApprovalRule,
   type ReasoningEffort,
 } from "./config.js";
-export { ServerConfigSchema, type RawServerConfig } from "./schemas/config.js";
+export {
+  ServerConfigSchema,
+  MCPLocalServerSchema,
+  MCPRemoteServerSchema,
+  MCPServerSchema,
+  ApprovalRuleSchema,
+  ReasoningEffortSchema,
+  type RawServerConfig,
+} from "./schemas/config.js";
 
 // UI
 export {

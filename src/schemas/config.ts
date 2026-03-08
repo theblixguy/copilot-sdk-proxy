@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const MCPLocalServerSchema = z.object({
+export const MCPLocalServerSchema = z.object({
   type: z.union([z.literal("local"), z.literal("stdio")]),
   command: z.string().min(1, "MCP server command cannot be empty"),
   args: z.array(z.string()),
@@ -10,7 +10,7 @@ const MCPLocalServerSchema = z.object({
   timeout: z.number().positive().optional(),
 });
 
-const MCPRemoteServerSchema = z.object({
+export const MCPRemoteServerSchema = z.object({
   type: z.union([z.literal("http"), z.literal("sse")]),
   url: z.url(),
   headers: z.record(z.string(), z.string()).optional(),
@@ -18,18 +18,18 @@ const MCPRemoteServerSchema = z.object({
   timeout: z.number().positive().optional(),
 });
 
-const MCPServerSchema = z.union([MCPLocalServerSchema, MCPRemoteServerSchema]);
+export const MCPServerSchema = z.union([MCPLocalServerSchema, MCPRemoteServerSchema]);
 
 const VALID_PERMISSION_KINDS = ["read", "write", "shell", "mcp", "url"] as const;
 
-const ApprovalRuleSchema = z.union([
+export const ApprovalRuleSchema = z.union([
   z.boolean(),
   z.array(z.enum(VALID_PERMISSION_KINDS)),
 ]);
 
 const VALID_REASONING_EFFORTS = ["low", "medium", "high", "xhigh"] as const;
 
-const ReasoningEffortSchema = z.enum(VALID_REASONING_EFFORTS);
+export const ReasoningEffortSchema = z.enum(VALID_REASONING_EFFORTS);
 
 export type MCPLocalServer = z.infer<typeof MCPLocalServerSchema>;
 export type MCPRemoteServer = z.infer<typeof MCPRemoteServerSchema>;
