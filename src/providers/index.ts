@@ -28,8 +28,9 @@ export function createAutoProvider(
           ...baseCtx,
           config: configs[name],
         };
-        app.register(async (scoped) => {
+        app.register((scoped, _opts, done) => {
           provider.register(scoped, ctx);
+          done();
         });
       }
     },
