@@ -9,7 +9,7 @@ export { CopilotService, type CopilotServiceOptions } from "./copilot-service.js
 export { DefaultConversationManager, type Conversation, type ConversationManager } from "./conversation-manager.js";
 
 // Streaming core
-export { runSessionStreaming, type StreamProtocol } from "./providers/shared/streaming-core.js";
+export { runSessionStreaming, createCommonEventHandler, type StreamProtocol, type CommonEventHandler } from "./providers/shared/streaming-core.js";
 export { SSE_HEADERS, sendSSEEvent, sendSSEComment, currentTimestamp, formatCompaction, recordUsageEvent } from "./providers/shared/streaming-utils.js";
 
 // Re-export all SDK types so consumers don't need a direct @github/copilot-sdk dependency

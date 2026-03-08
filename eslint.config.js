@@ -29,6 +29,6 @@ export default defineConfig(
     },
   },
   {
-    ignores: ["dist/", "node_modules/", "config.json5", "eslint.config.js", "vitest.config.ts"],
+    ignores: ["dist/", "node_modules/", "config.json5", "eslint.config.js", "vitest.config.ts", "vitest.live.config.ts"],
   },
 );

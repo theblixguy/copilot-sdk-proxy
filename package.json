@@ -45,6 +45,7 @@
     "start": "node dist/cli.js",
     "dev": "tsx src/cli.ts",
     "test": "vitest run",
+    "test:live": "vitest run --config vitest.live.config.ts",
     "test:watch": "vitest",
     "lint": "eslint .",
     "typecheck": "tsc -p tsconfig.check.json",
