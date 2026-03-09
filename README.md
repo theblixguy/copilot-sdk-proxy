@@ -125,6 +125,10 @@ Options:
   -h, --help                     Show help
 ```
 
+## Architecture
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for how the codebase is structured, the request lifecycle, streaming protocol translation, and conversation management.
+
 ## Development
 
 ```bash
