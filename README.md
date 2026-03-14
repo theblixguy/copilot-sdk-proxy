@@ -127,7 +127,9 @@ Options:
 
 ## Architecture
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for how the codebase is structured, the request lifecycle, streaming protocol translation, and conversation management.
+See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for how the codebase is structured, the request lifecycle, streaming protocol translation, and conversation management.
+
+See [TESTING.md](docs/TESTING.md) for how the integration tests work using llm-mock-server and the SDK's BYOK provider.
 
 ## Development
 
