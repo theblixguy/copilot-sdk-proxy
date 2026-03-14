@@ -9,6 +9,7 @@ export interface SessionConfigOptions {
   config: ServerConfig;
   supportsReasoningEffort: boolean;
   cwd?: string | undefined;
+  provider?: SessionConfig["provider"];
 }
 
 function isApproved(rule: ApprovalRule, kind: string): boolean {
@@ -23,6 +24,7 @@ export function createSessionConfig({
   config,
   supportsReasoningEffort,
   cwd,
+  provider,
 }: SessionConfigOptions): SessionConfig {
   return {
     clientName: "copilot-sdk-proxy",
@@ -30,6 +32,7 @@ export function createSessionConfig({
     streaming: true,
     infiniteSessions: { enabled: true },
     workingDirectory: cwd ?? process.cwd(),
+    ...(provider && { provider }),
 
     ...(systemMessage && {
       systemMessage: {

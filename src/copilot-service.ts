@@ -11,6 +11,7 @@ export interface CopilotServiceOptions {
   logLevel?: LogLevel | undefined;
   logger?: Logger | undefined;
   cwd?: string | undefined;
+  githubToken?: string | undefined;
 }
 
 const MODEL_CACHE_TTL_MS = 30 * 60 * 1000;
@@ -31,6 +32,10 @@ export class CopilotService {
       env: Object.fromEntries(
         Object.entries(process.env).filter((e): e is [string, string] => e[1] != null),
       ),
+      ...(options.githubToken && {
+        githubToken: options.githubToken,
+        useLoggedInUser: false,
+      }),
     });
   }
 

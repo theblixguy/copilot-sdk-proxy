@@ -1,3 +1,4 @@
+import type { SessionConfig } from "@github/copilot-sdk";
 import type { CopilotService } from "./copilot-service.js";
 import type { ServerConfig } from "./config.js";
 import type { Logger } from "./logger.js";
@@ -9,4 +10,5 @@ export interface AppContext {
   config: ServerConfig;
   port: number;
   stats: Stats;
+  provider?: SessionConfig["provider"];
 }

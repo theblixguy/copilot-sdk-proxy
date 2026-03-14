@@ -136,6 +136,7 @@ export function runHandlerPipeline<TReq extends { model: string; stream?: boolea
         config,
         supportsReasoningEffort,
         cwd: service.cwd,
+        provider: ctx.provider,
       };
       const sessionConfig = pipeline.createSessionConfig
         ? pipeline.createSessionConfig(baseOptions, conversation, req)
