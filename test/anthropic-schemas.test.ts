@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
 import {
-  AnthropicMessagesRequestSchema,
+  AnthropicRequestSchema,
   extractAnthropicSystem,
 } from "../src/providers/claude/schemas.js";
 
-describe("AnthropicMessagesRequestSchema", () => {
+describe("AnthropicRequestSchema", () => {
   const validRequest = {
     model: "claude-sonnet-4-20250514",
     max_tokens: 1024,
@@ -12,17 +12,17 @@ describe("AnthropicMessagesRequestSchema", () => {
   };
 
   it("accepts a valid minimal request", () => {
-    const result = AnthropicMessagesRequestSchema.safeParse(validRequest);
+    const result = AnthropicRequestSchema.safeParse(validRequest);
     expect(result.success).toBe(true);
   });
 
   it("rejects missing model", () => {
     const { model: _model, ...rest } = validRequest;
-    expect(AnthropicMessagesRequestSchema.safeParse(rest).success).toBe(false);
+    expect(AnthropicRequestSchema.safeParse(rest).success).toBe(false);
   });
 
   it("rejects empty model string", () => {
-    const result = AnthropicMessagesRequestSchema.safeParse({
+    const result = AnthropicRequestSchema.safeParse({
       ...validRequest,
       model: "",
     });
@@ -31,18 +31,18 @@ describe("AnthropicMessagesRequestSchema", () => {
 
   it("rejects missing max_tokens", () => {
     const { max_tokens: _maxTokens, ...rest } = validRequest;
-    expect(AnthropicMessagesRequestSchema.safeParse(rest).success).toBe(false);
+    expect(AnthropicRequestSchema.safeParse(rest).success).toBe(false);
   });
 
   it("rejects non-positive max_tokens", () => {
     expect(
-      AnthropicMessagesRequestSchema.safeParse({
+      AnthropicRequestSchema.safeParse({
         ...validRequest,
         max_tokens: 0,
       }).success,
     ).toBe(false);
     expect(
-      AnthropicMessagesRequestSchema.safeParse({
+      AnthropicRequestSchema.safeParse({
         ...validRequest,
         max_tokens: -1,
       }).success,
@@ -51,7 +51,7 @@ describe("AnthropicMessagesRequestSchema", () => {
 
   it("rejects empty messages array", () => {
     expect(
-      AnthropicMessagesRequestSchema.safeParse({
+      AnthropicRequestSchema.safeParse({
         ...validRequest,
         messages: [],
       }).success,
@@ -60,16 +60,16 @@ describe("AnthropicMessagesRequestSchema", () => {
 
   it("rejects missing messages", () => {
     const { messages: _messages, ...rest } = validRequest;
-    expect(AnthropicMessagesRequestSchema.safeParse(rest).success).toBe(false);
+    expect(AnthropicRequestSchema.safeParse(rest).success).toBe(false);
   });
 
   it("accepts string content shorthand", () => {
-    const result = AnthropicMessagesRequestSchema.safeParse(validRequest);
+    const result = AnthropicRequestSchema.safeParse(validRequest);
     expect(result.success).toBe(true);
   });
 
   it("accepts array content with text blocks", () => {
-    const result = AnthropicMessagesRequestSchema.safeParse({
+    const result = AnthropicRequestSchema.safeParse({
       ...validRequest,
       messages: [
         { role: "user", content: [{ type: "text", text: "Hello" }] },
@@ -79,7 +79,7 @@ describe("AnthropicMessagesRequestSchema", () => {
   });
 
   it("accepts array content with tool_use blocks", () => {
-    const result = AnthropicMessagesRequestSchema.safeParse({
+    const result = AnthropicRequestSchema.safeParse({
       ...validRequest,
       messages: [
         {
@@ -105,7 +105,7 @@ describe("AnthropicMessagesRequestSchema", () => {
   });
 
   it("accepts array content with tool_result blocks (string content)", () => {
-    const result = AnthropicMessagesRequestSchema.safeParse({
+    const result = AnthropicRequestSchema.safeParse({
       ...validRequest,
       messages: [
         {
@@ -124,7 +124,7 @@ describe("AnthropicMessagesRequestSchema", () => {
   });
 
   it("accepts array content with tool_result blocks (TextBlock[] content)", () => {
-    const result = AnthropicMessagesRequestSchema.safeParse({
+    const result = AnthropicRequestSchema.safeParse({
       ...validRequest,
       messages: [
         {
@@ -143,7 +143,7 @@ describe("AnthropicMessagesRequestSchema", () => {
   });
 
   it("accepts mixed content blocks in a single message", () => {
-    const result = AnthropicMessagesRequestSchema.safeParse({
+    const result = AnthropicRequestSchema.safeParse({
       ...validRequest,
       messages: [
         {
@@ -167,7 +167,7 @@ describe("AnthropicMessagesRequestSchema", () => {
   });
 
   it("accepts unknown content block types and filters them out", () => {
-    const result = AnthropicMessagesRequestSchema.safeParse({
+    const result = AnthropicRequestSchema.safeParse({
       ...validRequest,
       messages: [
         {
@@ -188,7 +188,7 @@ describe("AnthropicMessagesRequestSchema", () => {
   });
 
   it("accepts a message where all blocks are unknown", () => {
-    const result = AnthropicMessagesRequestSchema.safeParse({
+    const result = AnthropicRequestSchema.safeParse({
       ...validRequest,
       messages: [
         {
@@ -207,7 +207,7 @@ describe("AnthropicMessagesRequestSchema", () => {
   });
 
   it("accepts system as string", () => {
-    const result = AnthropicMessagesRequestSchema.safeParse({
+    const result = AnthropicRequestSchema.safeParse({
       ...validRequest,
       system: "You are a helpful assistant.",
     });
@@ -215,7 +215,7 @@ describe("AnthropicMessagesRequestSchema", () => {
   });
 
   it("accepts system as TextBlock array", () => {
-    const result = AnthropicMessagesRequestSchema.safeParse({
+    const result = AnthropicRequestSchema.safeParse({
       ...validRequest,
       system: [{ type: "text", text: "You are a helpful assistant." }],
     });
@@ -223,7 +223,7 @@ describe("AnthropicMessagesRequestSchema", () => {
   });
 
   it("accepts stream: true", () => {
-    const result = AnthropicMessagesRequestSchema.safeParse({
+    const result = AnthropicRequestSchema.safeParse({
       ...validRequest,
       stream: true,
     });
@@ -232,7 +232,7 @@ describe("AnthropicMessagesRequestSchema", () => {
   });
 
   it("accepts stream: false", () => {
-    const result = AnthropicMessagesRequestSchema.safeParse({
+    const result = AnthropicRequestSchema.safeParse({
       ...validRequest,
       stream: false,
     });
@@ -241,7 +241,7 @@ describe("AnthropicMessagesRequestSchema", () => {
   });
 
   it("accepts optional fields", () => {
-    const result = AnthropicMessagesRequestSchema.safeParse({
+    const result = AnthropicRequestSchema.safeParse({
       ...validRequest,
       stream: true,
       temperature: 0.7,
@@ -254,7 +254,7 @@ describe("AnthropicMessagesRequestSchema", () => {
   });
 
   it("accepts tools array", () => {
-    const result = AnthropicMessagesRequestSchema.safeParse({
+    const result = AnthropicRequestSchema.safeParse({
       ...validRequest,
       tools: [
         {

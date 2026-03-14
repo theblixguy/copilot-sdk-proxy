@@ -1,66 +1,33 @@
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
+import {
+  ResponsesRequestSchema as BaseResponsesRequestSchema,
+  FunctionToolSchema,
+  type FunctionTool,
+  type InputItem as BaseInputItem,
+  type FunctionCallOutput,
+} from "llm-schemas/openai/responses";
 
-const ResponsesInputMessageSchema = z.object({
-  type: z.literal("message").optional(),
-  role: z.enum(["user", "assistant", "system", "developer"]),
-  content: z.union([z.string(), z.array(z.record(z.string(), z.unknown()))]),
-});
+export type InputItem = BaseInputItem;
+export type { FunctionCallOutput };
 
-const FunctionCallInputSchema = z.object({
-  type: z.literal("function_call"),
-  id: z.string().optional(),
-  call_id: z.string(),
-  name: z.string(),
-  arguments: z.string(),
-});
-
-const FunctionCallOutputInputSchema = z.object({
-  type: z.literal("function_call_output"),
-  call_id: z.string(),
-  output: z.string(),
-});
-
-const InputItemSchema = z.union([
-  ResponsesInputMessageSchema,
-  FunctionCallInputSchema,
-  FunctionCallOutputInputSchema,
-]);
-
-export type InputItem = z.infer<typeof InputItemSchema>;
-export type FunctionCallOutputInput = z.infer<typeof FunctionCallOutputInputSchema>;
-
-/** Accept any tool shape in the request; we only process function tools. */
-const RawToolSchema = z.record(z.string(), z.unknown());
-
-const FunctionToolSchema = z.object({
-  type: z.literal("function"),
-  name: z.string(),
-  description: z.string().optional(),
-  parameters: z.record(z.string(), z.unknown()).optional(),
-  strict: z.boolean().optional(),
-});
-
-export type ResponsesTool = z.infer<typeof FunctionToolSchema>;
-
-/** Narrow to function tools only (ignore web_search, code_interpreter, etc.) */
-export function filterFunctionTools(tools: Record<string, unknown>[]): ResponsesTool[] {
+export function filterFunctionTools(tools: Record<string, unknown>[]): FunctionTool[] {
   return tools
     .filter((t) => t.type === "function")
     .map((t) => FunctionToolSchema.parse(t));
 }
 
-export const ResponsesRequestSchema = z.object({
-  model: z.string().min(1, "Model is required"),
-  input: z.union([z.string(), z.array(InputItemSchema)]),
-  instructions: z.string().optional(),
-  tools: z.array(RawToolSchema).optional(),
-  stream: z.boolean().optional(),
-  temperature: z.number().optional(),
-  previous_response_id: z.string().optional(),
-});
+// Model and input are optional in the spec but required by the proxy
+export const ResponsesRequestSchema = BaseResponsesRequestSchema.refine(
+  (data): data is typeof data & { model: string; input: string | BaseInputItem[] } =>
+    typeof data.model === "string" && data.model.length > 0 && data.input != null,
+  { message: "Model and input are required" },
+);
 
-export type ResponsesRequest = z.infer<typeof ResponsesRequestSchema>;
+export type ResponsesRequest = z.infer<typeof BaseResponsesRequestSchema> & {
+  model: string;
+  input: string | InputItem[];
+};
 
 export interface MessageContent {
   type: "output_text";
@@ -109,7 +76,6 @@ export interface ResponseObject {
   error?: { code: string; message: string } | null;
 }
 
-// Re-export from shared so existing consumers don't break
 export { currentTimestamp } from "../shared/streaming-utils.js";
 
 export function genId(prefix: string): string {

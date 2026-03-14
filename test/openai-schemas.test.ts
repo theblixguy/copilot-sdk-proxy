@@ -1,26 +1,26 @@
 import { describe, it, expect } from "vitest";
-import { ChatCompletionRequestSchema, currentTimestamp } from "../src/providers/openai/schemas.js";
+import { OpenAIRequestSchema, currentTimestamp } from "../src/providers/openai/schemas.js";
 
-describe("ChatCompletionRequestSchema", () => {
+describe("OpenAIRequestSchema", () => {
   const validRequest = {
     model: "gpt-4",
     messages: [{ role: "user", content: "Hello" }],
   };
 
   it("accepts a valid minimal request", () => {
-    const result = ChatCompletionRequestSchema.safeParse(validRequest);
+    const result = OpenAIRequestSchema.safeParse(validRequest);
     expect(result.success).toBe(true);
   });
 
   it("rejects missing model", () => {
-    const result = ChatCompletionRequestSchema.safeParse({
+    const result = OpenAIRequestSchema.safeParse({
       messages: [{ role: "user", content: "Hello" }],
     });
     expect(result.success).toBe(false);
   });
 
   it("rejects empty model string", () => {
-    const result = ChatCompletionRequestSchema.safeParse({
+    const result = OpenAIRequestSchema.safeParse({
       model: "",
       messages: [{ role: "user", content: "Hello" }],
     });
@@ -28,7 +28,7 @@ describe("ChatCompletionRequestSchema", () => {
   });
 
   it("rejects empty messages array", () => {
-    const result = ChatCompletionRequestSchema.safeParse({
+    const result = OpenAIRequestSchema.safeParse({
       model: "gpt-4",
       messages: [],
     });
@@ -36,14 +36,14 @@ describe("ChatCompletionRequestSchema", () => {
   });
 
   it("rejects missing messages", () => {
-    const result = ChatCompletionRequestSchema.safeParse({
+    const result = OpenAIRequestSchema.safeParse({
       model: "gpt-4",
     });
     expect(result.success).toBe(false);
   });
 
   it("accepts array content format in messages", () => {
-    const result = ChatCompletionRequestSchema.safeParse({
+    const result = OpenAIRequestSchema.safeParse({
       model: "gpt-4",
       messages: [
         {
@@ -56,7 +56,7 @@ describe("ChatCompletionRequestSchema", () => {
   });
 
   it("accepts null content", () => {
-    const result = ChatCompletionRequestSchema.safeParse({
+    const result = OpenAIRequestSchema.safeParse({
       model: "gpt-4",
       messages: [{ role: "assistant", content: null }],
     });
@@ -64,7 +64,7 @@ describe("ChatCompletionRequestSchema", () => {
   });
 
   it("accepts optional fields", () => {
-    const result = ChatCompletionRequestSchema.safeParse({
+    const result = OpenAIRequestSchema.safeParse({
       ...validRequest,
       temperature: 0.7,
       top_p: 0.9,
@@ -77,7 +77,7 @@ describe("ChatCompletionRequestSchema", () => {
   });
 
   it("accepts tools array", () => {
-    const result = ChatCompletionRequestSchema.safeParse({
+    const result = OpenAIRequestSchema.safeParse({
       ...validRequest,
       tools: [
         {
@@ -94,7 +94,7 @@ describe("ChatCompletionRequestSchema", () => {
   });
 
   it("accepts stream: true", () => {
-    const result = ChatCompletionRequestSchema.safeParse({
+    const result = OpenAIRequestSchema.safeParse({
       ...validRequest,
       stream: true,
     });
@@ -103,7 +103,7 @@ describe("ChatCompletionRequestSchema", () => {
   });
 
   it("accepts stream: false", () => {
-    const result = ChatCompletionRequestSchema.safeParse({
+    const result = OpenAIRequestSchema.safeParse({
       ...validRequest,
       stream: false,
     });
@@ -112,7 +112,7 @@ describe("ChatCompletionRequestSchema", () => {
   });
 
   it("accepts messages with tool_calls", () => {
-    const result = ChatCompletionRequestSchema.safeParse({
+    const result = OpenAIRequestSchema.safeParse({
       model: "gpt-4",
       messages: [
         {

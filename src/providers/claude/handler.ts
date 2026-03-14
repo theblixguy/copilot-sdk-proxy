@@ -2,23 +2,23 @@ import type { FastifyRequest, FastifyReply } from "fastify";
 import type { AppContext } from "../../context.js";
 import type { ConversationManager } from "../../conversation-manager.js";
 import {
-  AnthropicMessagesRequestSchema,
+  AnthropicRequestSchema,
   extractAnthropicSystem,
 } from "./schemas.js";
-import type { AnthropicMessagesRequest } from "./schemas.js";
+import type { AnthropicRequest } from "./schemas.js";
 import { formatAnthropicPrompt } from "./prompt.js";
 import { handleAnthropicStreaming } from "./streaming.js";
 import { sendAnthropicError as sendError } from "../shared/errors.js";
 import { runHandlerPipeline, type BaseHandlerOptions } from "../shared/handler-core.js";
 
-export type MessagesHandlerOptions = BaseHandlerOptions<AnthropicMessagesRequest>;
+export type MessagesHandlerOptions = BaseHandlerOptions<AnthropicRequest>;
 
 export function createMessagesHandler(
   ctx: AppContext,
   manager: ConversationManager,
   options?: MessagesHandlerOptions,
 ) {
-  const handle = runHandlerPipeline<AnthropicMessagesRequest>(ctx, manager, {
+  const handle = runHandlerPipeline<AnthropicRequest>(ctx, manager, {
     sendError,
 
     extractSystemMessage: (req) => extractAnthropicSystem(req.system),
@@ -36,7 +36,7 @@ export function createMessagesHandler(
     request: FastifyRequest,
     reply: FastifyReply,
   ): Promise<void> {
-    const parseResult = AnthropicMessagesRequestSchema.safeParse(request.body);
+    const parseResult = AnthropicRequestSchema.safeParse(request.body);
     if (!parseResult.success) {
       const firstIssue = parseResult.error.issues[0];
       const message = firstIssue?.message ?? "Invalid request body";

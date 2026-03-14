@@ -86,11 +86,11 @@ export { providers, createAutoProvider } from "./providers/index.js";
 
 // OpenAI provider
 export {
-  ChatCompletionRequestSchema,
+  OpenAIRequestSchema,
   extractContentText,
   extractSystemMessages,
-  type ChatCompletionMessage,
-  type ChatCompletionRequest,
+  type Message,
+  type OpenAIRequest,
   type ChatCompletionChunk,
   type Choice,
   type ModelsResponse,
@@ -101,10 +101,10 @@ export { OpenAIProtocol, handleStreaming as handleOpenAIStreaming } from "./prov
 
 // Claude provider
 export {
-  AnthropicMessagesRequestSchema,
+  AnthropicRequestSchema,
   extractAnthropicSystem,
   type AnthropicMessage,
-  type AnthropicMessagesRequest,
+  type AnthropicRequest,
   type ContentBlock,
   type AnthropicErrorResponse,
   type CountTokensResponse,
@@ -124,7 +124,7 @@ export {
   type ResponsesRequest,
   type ResponseObject,
   type OutputItem,
-  type FunctionCallOutputInput,
+  type FunctionCallOutput,
   type FunctionCallOutputItem,
 } from "./providers/codex/schemas.js";
 export { createResponsesHandler, type ResponsesHandlerOptions } from "./providers/codex/handler.js";

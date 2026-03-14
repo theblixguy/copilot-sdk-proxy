@@ -2,14 +2,14 @@ import type { FastifyRequest, FastifyReply } from "fastify";
 import { estimateTokenCount } from "tokenx";
 import type { AppContext } from "../../context.js";
 import {
-  AnthropicMessagesRequestSchema,
-  type AnthropicMessagesRequest,
+  AnthropicRequestSchema,
+  type AnthropicRequest,
 } from "./schemas.js";
 import { sendAnthropicError } from "../shared/errors.js";
 
 // The token estimator needs a single string, so we pull all text out of
 // the structured request.
-function extractAllText(req: AnthropicMessagesRequest): string {
+function extractAllText(req: AnthropicRequest): string {
   const parts: string[] = [];
 
   if (req.system != null) {
@@ -67,7 +67,7 @@ export function createCountTokensHandler({ logger }: AppContext) {
     request: FastifyRequest,
     reply: FastifyReply,
   ): void {
-    const parseResult = AnthropicMessagesRequestSchema.safeParse(request.body);
+    const parseResult = AnthropicRequestSchema.safeParse(request.body);
     if (!parseResult.success) {
       const firstIssue = parseResult.error.issues[0];
       sendAnthropicError(reply, 400, "invalid_request_error", firstIssue?.message ?? "Invalid request body");

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { AnthropicRequestSchema as BaseAnthropicRequestSchema, type AnthropicRequest as BaseAnthropicRequest } from "llm-schemas/anthropic";
 
 export interface TextBlock {
   type: "text";
@@ -91,75 +91,40 @@ export interface CountTokensResponse {
   input_tokens: number;
 }
 
-const TextBlockSchema = z.object({
-  type: z.literal("text"),
-  text: z.string(),
-});
-
-const ToolUseBlockSchema = z.object({
-  type: z.literal("tool_use"),
-  id: z.string(),
-  name: z.string(),
-  input: z.record(z.string(), z.unknown()),
-});
-
-const ToolResultContentSchema = z.union([
-  z.string(),
-  z.array(TextBlockSchema),
-]);
-
-const ToolResultBlockSchema = z.object({
-  type: z.literal("tool_result"),
-  tool_use_id: z.string(),
-  content: ToolResultContentSchema.optional(),
-});
-
-const KnownContentBlockSchema = z.discriminatedUnion("type", [
-  TextBlockSchema,
-  ToolUseBlockSchema,
-  ToolResultBlockSchema,
-]);
-
-// Accept any object with a type field so unknown block types (e.g. thinking,
-// server_tool_use) don't fail validation. We filter them out after parsing.
-const LooseContentBlockSchema = z.union([
-  KnownContentBlockSchema,
-  z.looseObject({ type: z.string() }),
-]);
-
 const KNOWN_BLOCK_TYPES = new Set(["text", "tool_use", "tool_result"]);
 
-const AnthropicMessageSchema = z.object({
-  role: z.enum(["user", "assistant"]),
-  content: z.union([
-    z.string(),
-    z.array(LooseContentBlockSchema).transform((blocks) =>
-      blocks.filter((b): b is ContentBlock => KNOWN_BLOCK_TYPES.has(b.type)),
-    ),
-  ]),
-});
+export interface AnthropicRequest {
+  model: string;
+  max_tokens: number;
+  messages: AnthropicMessage[];
+  system?: string | TextBlock[] | undefined;
+  tools?: AnthropicToolDefinition[] | undefined;
+  stream?: boolean | undefined;
+  temperature?: number | undefined;
+  top_p?: number | undefined;
+  top_k?: number | undefined;
+  stop_sequences?: string[] | undefined;
+  metadata?: Record<string, unknown> | undefined;
+  [key: string]: unknown;
+}
 
-const AnthropicToolDefinitionSchema = z.object({
-  name: z.string(),
-  description: z.string().optional(),
-  input_schema: z.record(z.string(), z.unknown()),
-});
+// prompt.ts does exhaustive switch on block types, so filter out unknown ones
+function filterUnknownBlocks(data: BaseAnthropicRequest): AnthropicRequest {
+  return {
+    ...data,
+    messages: data.messages.map((msg) => ({
+      ...msg,
+      content:
+        typeof msg.content === "string"
+          ? msg.content
+          : msg.content.filter(
+              (b): b is ContentBlock => KNOWN_BLOCK_TYPES.has(b.type),
+            ),
+    })),
+  } as AnthropicRequest;
+}
 
-export const AnthropicMessagesRequestSchema = z.object({
-  model: z.string().min(1, "Model is required"),
-  max_tokens: z.number().int().positive("max_tokens must be positive"),
-  system: z.union([z.string(), z.array(TextBlockSchema)]).optional(),
-  messages: z.array(AnthropicMessageSchema).min(1, "Messages are required"),
-  tools: z.array(AnthropicToolDefinitionSchema).optional(),
-  stream: z.boolean().optional(),
-  temperature: z.number().optional(),
-  top_p: z.number().optional(),
-  top_k: z.number().optional(),
-  stop_sequences: z.array(z.string()).optional(),
-  metadata: z.record(z.string(), z.unknown()).optional(),
-});
-
-export type AnthropicMessagesRequest = z.infer<typeof AnthropicMessagesRequestSchema>;
+export const AnthropicRequestSchema = BaseAnthropicRequestSchema.transform(filterUnknownBlocks);
 
 // The Anthropic API accepts system as a string or an array of text blocks,
 // so we flatten it into a single string for the Copilot SDK.
