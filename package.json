@@ -67,7 +67,7 @@
     "@types/node": "25.5.0",
     "llm-mock-server": "1.0.1",
     "oxlint": "1.55.0",
-    "patch-package": "8.0.0",
+    "patch-package": "8.0.1",
     "tsx": "4.21.0",
     "typescript": "5.9.3",
     "vitest": "4.1.0"
