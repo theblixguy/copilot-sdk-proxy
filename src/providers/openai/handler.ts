@@ -1,17 +1,17 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import type { AppContext } from "../../context.js";
 import type { ConversationManager } from "../../conversation-manager.js";
-import { ChatCompletionRequestSchema, extractSystemMessages } from "./schemas.js";
-import type { ChatCompletionRequest } from "./schemas.js";
+import { OpenAIRequestSchema, extractSystemMessages } from "./schemas.js";
+import type { OpenAIRequest } from "./schemas.js";
 import { formatPrompt } from "./prompt.js";
 import { handleStreaming } from "./streaming.js";
 import { sendOpenAIError as sendError } from "../shared/errors.js";
 import { runHandlerPipeline, type BaseHandlerOptions } from "../shared/handler-core.js";
 
-export type CompletionsHandlerOptions = BaseHandlerOptions<ChatCompletionRequest>;
+export type CompletionsHandlerOptions = BaseHandlerOptions<OpenAIRequest>;
 
 export function createCompletionsHandler(ctx: AppContext, manager: ConversationManager, options?: CompletionsHandlerOptions) {
-  const handle = runHandlerPipeline<ChatCompletionRequest>(ctx, manager, {
+  const handle = runHandlerPipeline<OpenAIRequest>(ctx, manager, {
     sendError,
 
     extractSystemMessage: (req) => extractSystemMessages(req.messages),
@@ -29,7 +29,7 @@ export function createCompletionsHandler(ctx: AppContext, manager: ConversationM
     request: FastifyRequest,
     reply: FastifyReply,
   ): Promise<void> {
-    const parseResult = ChatCompletionRequestSchema.safeParse(request.body);
+    const parseResult = OpenAIRequestSchema.safeParse(request.body);
     if (!parseResult.success) {
       const firstIssue = parseResult.error.issues[0];
       const message = firstIssue?.message ?? "Invalid request body";

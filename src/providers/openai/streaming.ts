@@ -4,7 +4,7 @@ import type { CopilotSession } from "@github/copilot-sdk";
 import type { Logger } from "../../logger.js";
 import type { Stats } from "../../stats.js";
 import { SSE_HEADERS } from "../shared/streaming-utils.js";
-import { currentTimestamp, type ChatCompletionMessage, type ChatCompletionChunk } from "./schemas.js";
+import { currentTimestamp, type Message, type ChatCompletionChunk } from "./schemas.js";
 import type { StreamProtocol } from "../shared/streaming-core.js";
 import { runSessionStreaming } from "../shared/streaming-core.js";
 
@@ -17,7 +17,7 @@ export class OpenAIProtocol implements StreamProtocol {
     this.model = model;
   }
 
-  private sendChunk(r: FastifyReply, delta: Partial<ChatCompletionMessage>, finishReason: string | null): void {
+  private sendChunk(r: FastifyReply, delta: Partial<Message>, finishReason: string | null): void {
     const chunk = {
       id: this.completionId,
       object: "chat.completion.chunk" as const,
@@ -70,7 +70,7 @@ export function handleStreaming(
     object: "chat.completion.chunk" as const,
     created: currentTimestamp(),
     model,
-    choices: [{ index: 0, delta: { role: "assistant" } as Partial<ChatCompletionMessage>, finish_reason: null }],
+    choices: [{ index: 0, delta: { role: "assistant" } as Partial<Message>, finish_reason: null }],
   } satisfies ChatCompletionChunk;
   reply.raw.write(`data: ${JSON.stringify(initialChunk)}\n\n`);
 

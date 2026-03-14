@@ -1,69 +1,14 @@
 import { z } from "zod";
+import { OpenAIRequestSchema, type Message } from "llm-schemas/openai/chat-completions";
 
-const ContentPartSchema = z.looseObject({
-  type: z.string(),
-  text: z.string().optional(),
-});
-
-const VALID_ROLES = ["system", "developer", "user", "assistant", "tool"] as const;
-
-const MessageSchema = z.object({
-  role: z.enum(VALID_ROLES).optional(),
-  content: z
-    .union([z.string(), z.array(ContentPartSchema), z.null()])
-    .optional(),
-  name: z.string().optional(),
-  tool_calls: z
-    .array(
-      z.object({
-        index: z.number().optional(),
-        id: z.string().optional(),
-        type: z.string().optional(),
-        function: z.object({
-          name: z.string(),
-          arguments: z.string(),
-        }),
-      }),
-    )
-    .optional(),
-  tool_call_id: z.string().optional(),
-});
-
-export type ChatCompletionMessage = z.infer<typeof MessageSchema>;
-
-export const ChatCompletionRequestSchema = z.object({
-  model: z.string().min(1, "Model is required"),
-  messages: z.array(MessageSchema).min(1, "Messages are required"),
-  temperature: z.number().optional(),
-  top_p: z.number().optional(),
-  n: z.number().optional(),
-  stop: z.union([z.string(), z.array(z.string())]).optional(),
-  max_tokens: z.number().optional(),
-  presence_penalty: z.number().optional(),
-  frequency_penalty: z.number().optional(),
-  tools: z
-    .array(
-      z.object({
-        type: z.string(),
-        function: z.object({
-          name: z.string(),
-          description: z.string().optional(),
-          parameters: z.record(z.string(), z.unknown()).optional(),
-        }),
-      }),
-    )
-    .optional(),
-  stream: z.boolean().optional(),
-  tool_choice: z.unknown().optional(),
-  user: z.string().optional(),
-});
-
-export type ChatCompletionRequest = z.infer<typeof ChatCompletionRequestSchema>;
+export { OpenAIRequestSchema };
+export type { Message };
+export type OpenAIRequest = z.infer<typeof OpenAIRequestSchema>;
 
 export interface Choice {
   index: number;
-  message?: ChatCompletionMessage | undefined;
-  delta?: Partial<ChatCompletionMessage> | undefined;
+  message?: Message | undefined;
+  delta?: Partial<Message> | undefined;
   finish_reason: string | null;
 }
 
@@ -88,12 +33,9 @@ export interface ModelsResponse {
   data: Model[];
 }
 
-// Re-export from shared so existing consumers don't break
 export { currentTimestamp } from "../shared/streaming-utils.js";
 
-// We only support text content, so this rejects anything else early
-// and lets the caller surface a 400.
-export function extractContentText(content: ChatCompletionMessage["content"]): string {
+export function extractContentText(content: Message["content"]): string {
   if (content == null) {
     return "";
   }
@@ -124,7 +66,7 @@ export function extractContentText(content: ChatCompletionMessage["content"]): s
   return text;
 }
 
-export function extractSystemMessages(messages: ChatCompletionMessage[]): string | undefined {
+export function extractSystemMessages(messages: Message[]): string | undefined {
   const parts: string[] = [];
   for (const msg of messages) {
     if (msg.role !== "system" && msg.role !== "developer") continue;

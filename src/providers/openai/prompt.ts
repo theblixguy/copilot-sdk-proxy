@@ -1,9 +1,9 @@
-import { extractContentText, type ChatCompletionMessage } from "./schemas.js";
+import { extractContentText, type Message } from "./schemas.js";
 
 // System/developer messages are skipped because they're passed separately via
 // SessionConfig.systemMessage.
 export function formatPrompt(
-  messages: ChatCompletionMessage[],
+  messages: Message[],
 ): string {
   const parts: string[] = [];
 

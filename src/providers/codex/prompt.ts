@@ -1,4 +1,4 @@
-import type { InputItem, FunctionCallOutputInput } from "./schemas.js";
+import type { InputItem, FunctionCallOutput } from "./schemas.js";
 
 function extractContent(content: string | Record<string, unknown>[]): string {
   if (typeof content === "string") return content;
@@ -61,10 +61,10 @@ export function extractInstructions(input: string | InputItem[]): string | undef
 
 export function extractFunctionCallOutputs(
   input: string | InputItem[],
-): FunctionCallOutputInput[] {
+): FunctionCallOutput[] {
   if (typeof input === "string") return [];
   return input.filter(
-    (item): item is FunctionCallOutputInput =>
+    (item): item is FunctionCallOutput =>
       "type" in item && item.type === "function_call_output",
   );
 }
