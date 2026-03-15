@@ -10,7 +10,10 @@ import { genId } from "./schemas.js";
 import type { ResponsesRequest } from "./schemas.js";
 import { formatResponsesPrompt, extractInstructions } from "./prompt.js";
 import { handleResponsesStreaming } from "./streaming.js";
-import { sendOpenAIError as sendError } from "../shared/errors.js";
+import {
+  sendOpenAIError as sendError,
+  validateRequest,
+} from "../shared/errors.js";
 import {
   runHandlerPipeline,
   type BaseHandlerOptions,
@@ -72,18 +75,16 @@ export function createResponsesHandler(
 
       messageCount: (req) => (Array.isArray(req.input) ? req.input.length : 1),
 
-      stream: (session, prompt, model, reply, deps) => {
-        const responseId = genId("resp");
-        return handleResponsesStreaming(
+      stream: (session, prompt, model, reply, logger, stats) =>
+        handleResponsesStreaming(
           session,
           prompt,
           model,
           reply,
-          responseId,
-          deps.logger,
-          deps.stats,
-        );
-      },
+          genId("resp"),
+          logger,
+          stats,
+        ),
     },
     pipelineOverrides,
   );
@@ -92,16 +93,14 @@ export function createResponsesHandler(
     request: FastifyRequest,
     reply: FastifyReply,
   ): Promise<void> {
-    const parseResult = ResponsesRequestSchema.safeParse(request.body);
-    if (!parseResult.success) {
-      const firstIssue = parseResult.error.issues[0];
-      const message = firstIssue?.message ?? "Invalid request body";
-      const path = firstIssue?.path.join(".") || "root";
-      ctx.logger.warn(`Schema validation failed: ${message} (path: ${path})`);
-      sendError(reply, 400, "invalid_request_error", message);
-      return;
-    }
-
-    await handle(parseResult.data, reply);
+    const data = validateRequest(
+      ResponsesRequestSchema,
+      request.body,
+      reply,
+      sendError,
+      ctx.logger,
+    );
+    if (!data) return;
+    await handle(data, reply);
   };
 }

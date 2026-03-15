@@ -5,7 +5,10 @@ import { OpenAIRequestSchema, extractSystemMessages } from "./schemas.js";
 import type { OpenAIRequest } from "./schemas.js";
 import { formatPrompt } from "./prompt.js";
 import { handleStreaming } from "./streaming.js";
-import { sendOpenAIError as sendError } from "../shared/errors.js";
+import {
+  sendOpenAIError as sendError,
+  validateRequest,
+} from "../shared/errors.js";
 import {
   runHandlerPipeline,
   type BaseHandlerOptions,
@@ -26,13 +29,14 @@ export function createCompletionsHandler(
 
       extractSystemMessage: (req) => extractSystemMessages(req.messages),
 
-      formatPrompt: (req, conversation) =>
-        formatPrompt(req.messages.slice(conversation.sentMessageCount)),
+      formatPrompt: (req, conversation, isReuse) =>
+        formatPrompt(
+          req.messages.slice(isReuse ? conversation.sentMessageCount : 0),
+        ),
 
       messageCount: (req) => req.messages.length,
 
-      stream: (session, prompt, model, reply, deps) =>
-        handleStreaming(session, prompt, model, reply, deps.logger, deps.stats),
+      stream: handleStreaming,
     },
     options,
   );
@@ -41,16 +45,14 @@ export function createCompletionsHandler(
     request: FastifyRequest,
     reply: FastifyReply,
   ): Promise<void> {
-    const parseResult = OpenAIRequestSchema.safeParse(request.body);
-    if (!parseResult.success) {
-      const firstIssue = parseResult.error.issues[0];
-      const message = firstIssue?.message ?? "Invalid request body";
-      const path = firstIssue?.path.join(".") || "root";
-      ctx.logger.warn(`Schema validation failed: ${message} (path: ${path})`);
-      sendError(reply, 400, "invalid_request_error", message);
-      return;
-    }
-
-    await handle(parseResult.data, reply);
+    const data = validateRequest(
+      OpenAIRequestSchema,
+      request.body,
+      reply,
+      sendError,
+      ctx.logger,
+    );
+    if (!data) return;
+    await handle(data, reply);
   };
 }

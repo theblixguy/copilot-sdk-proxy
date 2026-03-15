@@ -5,7 +5,10 @@ import { AnthropicRequestSchema, extractAnthropicSystem } from "./schemas.js";
 import type { AnthropicRequest } from "./schemas.js";
 import { formatAnthropicPrompt } from "./prompt.js";
 import { handleAnthropicStreaming } from "./streaming.js";
-import { sendAnthropicError as sendError } from "../shared/errors.js";
+import {
+  sendAnthropicError as sendError,
+  validateRequest,
+} from "../shared/errors.js";
 import {
   runHandlerPipeline,
   type BaseHandlerOptions,
@@ -33,15 +36,7 @@ export function createMessagesHandler(
 
       messageCount: (req) => req.messages.length,
 
-      stream: (session, prompt, model, reply, deps) =>
-        handleAnthropicStreaming(
-          session,
-          prompt,
-          model,
-          reply,
-          deps.logger,
-          deps.stats,
-        ),
+      stream: handleAnthropicStreaming,
     },
     options,
   );
@@ -50,16 +45,14 @@ export function createMessagesHandler(
     request: FastifyRequest,
     reply: FastifyReply,
   ): Promise<void> {
-    const parseResult = AnthropicRequestSchema.safeParse(request.body);
-    if (!parseResult.success) {
-      const firstIssue = parseResult.error.issues[0];
-      const message = firstIssue?.message ?? "Invalid request body";
-      const path = firstIssue?.path.join(".") || "root";
-      ctx.logger.warn(`Schema validation failed: ${message} (path: ${path})`);
-      sendError(reply, 400, "invalid_request_error", message);
-      return;
-    }
-
-    await handle(parseResult.data, reply);
+    const data = validateRequest(
+      AnthropicRequestSchema,
+      request.body,
+      reply,
+      sendError,
+      ctx.logger,
+    );
+    if (!data) return;
+    await handle(data, reply);
   };
 }
