@@ -60,6 +60,7 @@ export {
 export {
   sendOpenAIError,
   sendAnthropicError,
+  validateRequest,
 } from "./providers/shared/errors.js";
 
 // Stats

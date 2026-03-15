@@ -57,7 +57,8 @@ export interface HandlerPipeline<TReq> extends BaseHandlerOptions<TReq> {
     prompt: string,
     model: string,
     reply: FastifyReply,
-    deps: { logger: Logger; stats: Stats },
+    logger: Logger,
+    stats: Stats,
   ) => Promise<boolean>;
 }
 
@@ -232,7 +233,8 @@ export function runHandlerPipeline<
           prompt,
           req.model,
           reply,
-          { logger, stats },
+          logger,
+          stats,
         );
         if (healthy) {
           conversation.sentMessageCount = pipeline.messageCount(req);
