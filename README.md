@@ -2,7 +2,7 @@
 
 A proxy server that wraps the [GitHub Copilot SDK](https://github.com/github/copilot-sdk) and exposes it as an OpenAI, Anthropic, or Codex (Responses) compatible API. Any client that speaks one of these APIs can talk to it.
 
-This is the shared core that [xcode-copilot-server](https://github.com/theblixguy/xcode-copilot-server) builds on. It also works standalone as a general-purpose Copilot proxy.
+This is the shared core that [xcode-copilot-server](https://github.com/theblixguy/xcode-copilot-server) builds on. It also works standalone as a general-purpose Copilot proxy. Request validation uses [`llm-schemas`](https://github.com/theblixguy/llm-schemas) and integration tests run against [`llm-mock-server`](https://github.com/theblixguy/llm-mock-server).
 
 ## Quick start
 
@@ -137,7 +137,8 @@ See [TESTING.md](docs/TESTING.md) for how the integration tests work using llm-m
 npm run build # Compile TypeScript
 npm run dev # Run from source with tsx
 npm test # Run tests
-npm run lint # Lint with ESLint
+npm run fmt # Format with oxfmt
+npm run lint # Lint with oxlint
 npm run typecheck # Type-check without emitting
 ```
 
