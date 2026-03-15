@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   OpenAIRequestSchema,
   currentTimestamp,
-} from "../src/providers/openai/schemas.js";
+} from "../../../src/providers/openai/schemas.js";
 
 describe("OpenAIRequestSchema", () => {
   const validRequest = {

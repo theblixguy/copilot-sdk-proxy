@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { createCountTokensHandler } from "../src/providers/claude/count-tokens.js";
-import { Logger } from "../src/logger.js";
+import { createCountTokensHandler } from "../../../src/providers/claude/count-tokens.js";
+import { Logger } from "../../../src/logger.js";
 
 function mockContext() {
   return {

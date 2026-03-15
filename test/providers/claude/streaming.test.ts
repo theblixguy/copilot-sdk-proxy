@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   startReply,
   AnthropicProtocol,
-} from "../src/providers/claude/streaming.js";
+} from "../../../src/providers/claude/streaming.js";
 
 function mockReply() {
   const written: string[] = [];

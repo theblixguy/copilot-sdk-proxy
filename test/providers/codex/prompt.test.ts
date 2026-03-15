@@ -3,7 +3,7 @@ import {
   formatResponsesPrompt,
   extractInstructions,
   extractFunctionCallOutputs,
-} from "../src/providers/codex/prompt.js";
+} from "../../../src/providers/codex/prompt.js";
 
 describe("formatResponsesPrompt", () => {
   it("handles string input", () => {

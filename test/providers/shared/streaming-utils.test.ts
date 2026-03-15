@@ -3,9 +3,9 @@ import {
   sendSSEEvent,
   recordUsageEvent,
   formatCompaction,
-} from "../src/providers/shared/streaming-utils.js";
-import { Stats, type UsageData } from "../src/stats.js";
-import { Logger } from "../src/logger.js";
+} from "../../../src/providers/shared/streaming-utils.js";
+import { Stats, type UsageData } from "../../../src/stats.js";
+import { Logger } from "../../../src/logger.js";
 
 function mockReply(): {
   reply: Parameters<typeof sendSSEEvent>[0];

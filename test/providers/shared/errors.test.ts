@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   sendOpenAIError,
   sendAnthropicError,
-} from "../src/providers/shared/errors.js";
+} from "../../../src/providers/shared/errors.js";
 
 function mockReply() {
   const sent: { status?: number; body?: unknown } = {};
