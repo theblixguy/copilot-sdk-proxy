@@ -1,6 +1,6 @@
 {
   "name": "copilot-sdk-proxy",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Generic proxy server translating OpenAI/Anthropic/Codex API requests into GitHub Copilot SDK sessions",
   "type": "module",
   "license": "MIT",
@@ -65,7 +65,7 @@
   },
   "devDependencies": {
     "@types/node": "25.5.0",
-    "llm-mock-server": "1.0.1",
+    "llm-mock-server": "1.0.2",
     "oxlint": "1.55.0",
     "patch-package": "8.0.1",
     "tsx": "4.21.0",
