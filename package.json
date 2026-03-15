@@ -1,6 +1,6 @@
 {
   "name": "copilot-sdk-proxy",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "Generic proxy server translating OpenAI/Anthropic/Codex API requests into GitHub Copilot SDK sessions",
   "type": "module",
   "license": "MIT",
@@ -43,7 +43,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "postinstall": "npx patch-package",
+    "prepare": "npx patch-package",
     "start": "node dist/cli.js",
     "dev": "tsx src/cli.ts",
     "test": "vitest run",
