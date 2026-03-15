@@ -6,9 +6,6 @@ import type { AppContext } from "../context.js";
 import type { ServerConfig } from "../config.js";
 import { PROVIDER_NAMES, type ProviderName } from "../schemas/config.js";
 
-export { PROVIDER_NAMES } from "../schemas/config.js";
-export type { ProviderName } from "../schemas/config.js";
-
 export const providers = {
   openai: openaiProvider,
   claude: claudeProvider,
