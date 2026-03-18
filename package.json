@@ -69,7 +69,7 @@
     "@types/node": "25.5.0",
     "llm-mock-server": "1.0.4",
     "oxfmt": "0.40.0",
-    "oxlint": "1.55.0",
+    "oxlint": "1.56.0",
     "patch-package": "8.0.1",
     "tsx": "4.21.0",
     "typescript": "5.9.3",
