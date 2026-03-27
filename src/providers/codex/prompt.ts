@@ -1,4 +1,7 @@
-import type { InputItem, FunctionCallOutput } from "./schemas.js";
+import type {
+  InputItem,
+  FunctionCallOutput,
+} from "#/providers/codex/schemas.js";
 
 function extractContent(content: string | Record<string, unknown>[]): string {
   if (typeof content === "string") return content;

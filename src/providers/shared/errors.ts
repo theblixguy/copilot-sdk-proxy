@@ -1,6 +1,6 @@
 import type { FastifyReply } from "fastify";
 import type { z } from "zod";
-import type { Logger } from "../../logger.js";
+import type { Logger } from "#/logger.js";
 
 type ErrorType = "invalid_request_error" | "api_error";
 type SendError = (

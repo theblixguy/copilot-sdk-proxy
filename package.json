@@ -30,6 +30,9 @@
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.js",

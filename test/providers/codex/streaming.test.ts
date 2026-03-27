@@ -3,8 +3,8 @@ import {
   nextSeq,
   startResponseStream,
   ResponsesProtocol,
-} from "../../../src/providers/codex/streaming.js";
-import type { SeqCounter } from "../../../src/providers/codex/streaming.js";
+} from "#/providers/codex/streaming.js";
+import type { SeqCounter } from "#/providers/codex/streaming.js";
 
 function mockReply(): {
   reply: Parameters<typeof startResponseStream>[0];

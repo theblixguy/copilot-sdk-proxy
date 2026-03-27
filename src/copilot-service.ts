@@ -5,7 +5,7 @@ import {
   type ModelInfo,
   type GetAuthStatusResponse,
 } from "@github/copilot-sdk";
-import type { LogLevel, Logger } from "./logger.js";
+import type { LogLevel, Logger } from "#/logger.js";
 
 export interface CopilotServiceOptions {
   logLevel?: LogLevel | undefined;

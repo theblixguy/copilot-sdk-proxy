@@ -1,6 +1,6 @@
 import type { SessionConfig, MCPServerConfig } from "@github/copilot-sdk";
-import type { ServerConfig, ApprovalRule } from "../../config.js";
-import type { Logger } from "../../logger.js";
+import type { ServerConfig, ApprovalRule } from "#/config.js";
+import type { Logger } from "#/logger.js";
 
 export interface SessionConfigOptions {
   model: string;

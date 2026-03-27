@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { claudeProvider } from "../../src/providers/claude/provider.js";
+import { claudeProvider } from "#/providers/claude/provider.js";
 import {
   TIMEOUT,
   CLAUDE_MODEL,

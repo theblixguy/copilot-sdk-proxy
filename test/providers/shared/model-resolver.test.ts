@@ -3,7 +3,7 @@ import type { ModelInfo } from "@github/copilot-sdk";
 import {
   normalizeModelId,
   resolveModel,
-} from "../../../src/providers/shared/model-resolver.js";
+} from "#/providers/shared/model-resolver.js";
 
 function model(id: string): ModelInfo {
   return {

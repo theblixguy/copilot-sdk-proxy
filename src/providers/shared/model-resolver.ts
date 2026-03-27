@@ -1,7 +1,7 @@
 import type { ModelInfo } from "@github/copilot-sdk";
-import type { CopilotService } from "../../copilot-service.js";
-import type { ReasoningEffort } from "../../config.js";
-import type { Logger } from "../../logger.js";
+import type { CopilotService } from "#/copilot-service.js";
+import type { ReasoningEffort } from "#/config.js";
+import type { Logger } from "#/logger.js";
 
 export function normalizeModelId(id: string): string {
   return id.replace(/-\d{8}$/, "").replace(/\./g, "-");

@@ -1,20 +1,20 @@
 import type { FastifyReply } from "fastify";
 import type { CopilotSession } from "@github/copilot-sdk";
-import type { Logger } from "../../logger.js";
-import type { Stats } from "../../stats.js";
+import type { Logger } from "#/logger.js";
+import type { Stats } from "#/stats.js";
 import type {
   ResponseObject,
   MessageOutputItem,
   ReasoningOutputItem,
   OutputItem,
-} from "./schemas.js";
-import { currentTimestamp, genId } from "./schemas.js";
+} from "#/providers/codex/schemas.js";
+import { currentTimestamp, genId } from "#/providers/codex/schemas.js";
 import {
   SSE_HEADERS,
   sendSSEEvent as sendEvent,
-} from "../shared/streaming-utils.js";
-import type { StreamProtocol } from "../shared/streaming-core.js";
-import { runSessionStreaming } from "../shared/streaming-core.js";
+} from "#/providers/shared/streaming-utils.js";
+import type { StreamProtocol } from "#/providers/shared/streaming-core.js";
+import { runSessionStreaming } from "#/providers/shared/streaming-core.js";
 
 export interface SeqCounter {
   value: number;

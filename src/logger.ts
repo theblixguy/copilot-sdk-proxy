@@ -1,4 +1,4 @@
-import { bold, dim, red, yellow, cyan, symbols } from "./ui.js";
+import { bold, dim, red, yellow, cyan, symbols } from "#/ui.js";
 
 export const LEVEL_PRIORITY = {
   none: 0,

@@ -1,15 +1,18 @@
 import type { FastifyReply } from "fastify";
 import type { SessionConfig, CopilotSession } from "@github/copilot-sdk";
-import type { AppContext } from "../../context.js";
+import type { AppContext } from "#/context.js";
 import type {
   Conversation,
   ConversationManager,
-} from "../../conversation-manager.js";
-import type { Logger } from "../../logger.js";
-import type { Stats } from "../../stats.js";
-import type { SessionConfigOptions } from "./session-config.js";
-import { normalizeModelId, resolveModelForSession } from "./model-resolver.js";
-import { createSessionConfig } from "./session-config.js";
+} from "#/conversation-manager.js";
+import type { Logger } from "#/logger.js";
+import type { Stats } from "#/stats.js";
+import type { SessionConfigOptions } from "#/providers/shared/session-config.js";
+import {
+  normalizeModelId,
+  resolveModelForSession,
+} from "#/providers/shared/model-resolver.js";
+import { createSessionConfig } from "#/providers/shared/session-config.js";
 
 export interface BaseHandlerOptions<TReq> {
   beforeHandler?: (req: TReq, reply: FastifyReply) => Promise<boolean>;

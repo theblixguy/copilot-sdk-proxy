@@ -1,12 +1,12 @@
 import { beforeAll, afterAll } from "vitest";
 import { createMock, type MockServer } from "llm-mock-server";
 import type { SessionConfig } from "@github/copilot-sdk";
-import { createServer } from "../../src/server.js";
-import type { AppContext } from "../../src/context.js";
-import { CopilotService } from "../../src/copilot-service.js";
-import { Logger } from "../../src/logger.js";
-import { Stats } from "../../src/stats.js";
-import type { Provider } from "../../src/providers/types.js";
+import { createServer } from "#/server.js";
+import type { AppContext } from "#/context.js";
+import { CopilotService } from "#/copilot-service.js";
+import { Logger } from "#/logger.js";
+import { Stats } from "#/stats.js";
+import type { Provider } from "#/providers/types.js";
 
 export const TIMEOUT = 60_000;
 export const OPENAI_MODEL = "gpt-5.4";

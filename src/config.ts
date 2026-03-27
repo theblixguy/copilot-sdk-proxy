@@ -2,14 +2,14 @@ import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { resolve, dirname, isAbsolute } from "node:path";
 import JSON5 from "json5";
-import type { Logger } from "./logger.js";
+import type { Logger } from "#/logger.js";
 import {
   ServerConfigSchema,
   PROVIDER_NAMES,
   type ProviderName,
   type MCPServer,
   type RawServerConfig,
-} from "./schemas/config.js";
+} from "#/schemas/config.js";
 
 export type {
   MCPLocalServer,
@@ -18,9 +18,9 @@ export type {
   ApprovalRule,
   ReasoningEffort,
   ProviderName,
-} from "./schemas/config.js";
+} from "#/schemas/config.js";
 
-export type { ProviderMode } from "./schemas/config.js";
+export type { ProviderMode } from "#/schemas/config.js";
 
 export type ServerConfig = Omit<
   RawServerConfig,

@@ -1,5 +1,5 @@
-import { LEVEL_PRIORITY, type LogLevel } from "./logger.js";
-import { PROVIDER_NAMES, type ProviderName } from "./schemas/config.js";
+import { LEVEL_PRIORITY, type LogLevel } from "#/logger.js";
+import { PROVIDER_NAMES, type ProviderName } from "#/schemas/config.js";
 
 const VALID_LOG_LEVELS = Object.keys(LEVEL_PRIORITY) as LogLevel[];
 

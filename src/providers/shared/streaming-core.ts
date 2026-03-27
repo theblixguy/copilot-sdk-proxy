@@ -1,8 +1,11 @@
 import type { FastifyReply } from "fastify";
 import type { CopilotSession, SessionEvent } from "@github/copilot-sdk";
-import type { Logger } from "../../logger.js";
-import type { Stats } from "../../stats.js";
-import { formatCompaction, recordUsageEvent } from "./streaming-utils.js";
+import type { Logger } from "#/logger.js";
+import type { Stats } from "#/stats.js";
+import {
+  formatCompaction,
+  recordUsageEvent,
+} from "#/providers/shared/streaming-utils.js";
 
 export interface StreamProtocol {
   flushDeltas(reply: FastifyReply, deltas: string[]): void;

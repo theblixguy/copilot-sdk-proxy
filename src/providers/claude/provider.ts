@@ -1,7 +1,7 @@
-import type { Provider } from "../types.js";
-import { createMessagesHandler } from "./handler.js";
-import { createCountTokensHandler } from "./count-tokens.js";
-import { DefaultConversationManager } from "../../conversation-manager.js";
+import type { Provider } from "#/providers/types.js";
+import { createMessagesHandler } from "#/providers/claude/handler.js";
+import { createCountTokensHandler } from "#/providers/claude/count-tokens.js";
+import { DefaultConversationManager } from "#/conversation-manager.js";
 
 export const claudeProvider = {
   name: "Claude",

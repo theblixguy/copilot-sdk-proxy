@@ -3,33 +3,33 @@ import { join, dirname } from "node:path";
 import { readFile } from "node:fs/promises";
 import { z } from "zod";
 import { Command } from "commander";
-import { CopilotService } from "./copilot-service.js";
+import { CopilotService } from "#/copilot-service.js";
 import {
   loadConfig,
   loadAllProviderConfigs,
   resolveConfigPath,
-} from "./config.js";
-import type { AllProviderConfigs, ServerConfig } from "./config.js";
-import { createServer } from "./server.js";
-import { Logger } from "./logger.js";
-import { Stats } from "./stats.js";
-import { providers, createAutoProvider } from "./providers/index.js";
-import type { Provider } from "./providers/types.js";
-import type { AppContext } from "./context.js";
-import type { ProviderMode } from "./schemas/config.js";
+} from "#/config.js";
+import type { AllProviderConfigs, ServerConfig } from "#/config.js";
+import { createServer } from "#/server.js";
+import { Logger } from "#/logger.js";
+import { Stats } from "#/stats.js";
+import { providers, createAutoProvider } from "#/providers/index.js";
+import type { Provider } from "#/providers/types.js";
+import type { AppContext } from "#/context.js";
+import type { ProviderMode } from "#/schemas/config.js";
 import {
   parsePort,
   parseLogLevel,
   parseProvider,
   parseIdleTimeout,
-} from "./cli-validators.js";
+} from "#/cli-validators.js";
 import {
   bold,
   dim,
   createSpinner,
   printBanner,
   printUsageSummary,
-} from "./ui.js";
+} from "#/ui.js";
 
 const PACKAGE_ROOT = dirname(import.meta.dirname);
 const DEFAULT_CONFIG_PATH = join(PACKAGE_ROOT, "config.json5");

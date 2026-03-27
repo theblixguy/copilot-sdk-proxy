@@ -36,7 +36,7 @@ export interface ModelsResponse {
   data: Model[];
 }
 
-export { currentTimestamp } from "../shared/streaming-utils.js";
+export { currentTimestamp } from "#/providers/shared/streaming-utils.js";
 
 export function extractContentText(content: Message["content"]): string {
   if (content == null) {

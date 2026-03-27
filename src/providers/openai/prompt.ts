@@ -1,4 +1,7 @@
-import { extractContentText, type Message } from "./schemas.js";
+import {
+  extractContentText,
+  type Message,
+} from "#/providers/openai/schemas.js";
 
 // System/developer messages are skipped because they're passed separately via
 // SessionConfig.systemMessage.

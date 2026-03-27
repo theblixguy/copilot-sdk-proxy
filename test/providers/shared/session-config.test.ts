@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
-import { createSessionConfig } from "../../../src/providers/shared/session-config.js";
-import { Logger } from "../../../src/logger.js";
-import type { ServerConfig } from "../../../src/config.js";
+import { createSessionConfig } from "#/providers/shared/session-config.js";
+import { Logger } from "#/logger.js";
+import type { ServerConfig } from "#/config.js";
 
 function defaultConfig(overrides?: Partial<ServerConfig>): ServerConfig {
   return {

@@ -1,10 +1,10 @@
 import { describe, it, expect, afterEach } from "vitest";
 import type { FastifyInstance } from "fastify";
-import { createServer } from "../src/server.js";
-import type { AppContext } from "../src/context.js";
-import type { Provider } from "../src/providers/types.js";
-import { Logger } from "../src/logger.js";
-import { Stats } from "../src/stats.js";
+import { createServer } from "#/server.js";
+import type { AppContext } from "#/context.js";
+import type { Provider } from "#/providers/types.js";
+import { Logger } from "#/logger.js";
+import { Stats } from "#/stats.js";
 
 const noopProvider: Provider = {
   name: "test",

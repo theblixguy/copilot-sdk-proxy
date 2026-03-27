@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2024",
+    "target": "ES2025",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "outDir": "dist",
@@ -13,7 +13,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "esModuleInterop": true,
+    "types": ["node"],
     "skipLibCheck": true,
     "declaration": true,
     "sourceMap": true

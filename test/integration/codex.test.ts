@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { codexProvider } from "../../src/providers/codex/provider.js";
+import { codexProvider } from "#/providers/codex/provider.js";
 import {
   TIMEOUT,
   OPENAI_MODEL,

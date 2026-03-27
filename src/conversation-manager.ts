@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { CopilotSession } from "@github/copilot-sdk";
-import type { Logger } from "./logger.js";
+import type { Logger } from "#/logger.js";
 
 export interface Conversation {
   id: string;

@@ -1,7 +1,7 @@
 import pc from "picocolors";
 import readline from "node:readline";
-import type { StatsSnapshot } from "./stats.js";
-import type { ProviderMode } from "./schemas/config.js";
+import type { StatsSnapshot } from "#/stats.js";
+import type { ProviderMode } from "#/schemas/config.js";
 
 export const bold = pc.bold;
 export const dim = pc.dim;

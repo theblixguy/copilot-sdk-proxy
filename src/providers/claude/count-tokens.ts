@@ -1,8 +1,11 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import { estimateTokenCount } from "tokenx";
-import type { AppContext } from "../../context.js";
-import { AnthropicRequestSchema, type AnthropicRequest } from "./schemas.js";
-import { sendAnthropicError } from "../shared/errors.js";
+import type { AppContext } from "#/context.js";
+import {
+  AnthropicRequestSchema,
+  type AnthropicRequest,
+} from "#/providers/claude/schemas.js";
+import { sendAnthropicError } from "#/providers/shared/errors.js";
 
 // The token estimator needs a single string, so we pull all text out of
 // the structured request.

@@ -1,16 +1,16 @@
 import { randomUUID } from "node:crypto";
 import type { FastifyReply } from "fastify";
 import type { CopilotSession } from "@github/copilot-sdk";
-import type { Logger } from "../../logger.js";
-import type { Stats } from "../../stats.js";
-import { SSE_HEADERS } from "../shared/streaming-utils.js";
+import type { Logger } from "#/logger.js";
+import type { Stats } from "#/stats.js";
+import { SSE_HEADERS } from "#/providers/shared/streaming-utils.js";
 import {
   currentTimestamp,
   type Message,
   type ChatCompletionChunk,
-} from "./schemas.js";
-import type { StreamProtocol } from "../shared/streaming-core.js";
-import { runSessionStreaming } from "../shared/streaming-core.js";
+} from "#/providers/openai/schemas.js";
+import type { StreamProtocol } from "#/providers/shared/streaming-core.js";
+import { runSessionStreaming } from "#/providers/shared/streaming-core.js";
 
 export class OpenAIProtocol implements StreamProtocol {
   private readonly completionId: string;
