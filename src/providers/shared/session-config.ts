@@ -1,4 +1,17 @@
-import type { SessionConfig, MCPServerConfig } from "@github/copilot-sdk";
+import type {
+  SessionConfig,
+  MCPServerConfig,
+  PermissionRequestResult,
+  SystemMessageReplaceConfig,
+} from "@github/copilot-sdk";
+
+type Hooks = NonNullable<SessionConfig["hooks"]>;
+type PreToolUseResult = NonNullable<
+  Awaited<NonNullable<ReturnType<NonNullable<Hooks["onPreToolUse"]>>>>
+>;
+type ErrorResult = NonNullable<
+  Awaited<NonNullable<ReturnType<NonNullable<Hooks["onErrorOccurred"]>>>>
+>;
 import type { ServerConfig, ApprovalRule } from "#/config.js";
 import type { Logger } from "#/logger.js";
 
@@ -36,15 +49,15 @@ export function createSessionConfig({
 
     ...(systemMessage && {
       systemMessage: {
-        mode: "replace" as const,
+        mode: "replace",
         content: systemMessage,
-      },
+      } satisfies SystemMessageReplaceConfig,
     }),
 
     mcpServers: Object.fromEntries(
       Object.entries(config.mcpServers).map(([name, server]) => [
         name,
-        { ...server, tools: ["*"] } as MCPServerConfig,
+        { ...server, tools: ["*"] } satisfies MCPServerConfig,
       ]),
     ),
 
@@ -72,8 +85,11 @@ export function createSessionConfig({
       );
       return Promise.resolve(
         approved
-          ? { kind: "approved" as const }
-          : { kind: "denied-by-rules" as const, rules: [] },
+          ? ({ kind: "approved" } satisfies PermissionRequestResult)
+          : ({
+              kind: "denied-by-rules",
+              rules: [],
+            } satisfies PermissionRequestResult),
       );
     },
 
@@ -86,19 +102,25 @@ export function createSessionConfig({
           config.allowedCliTools.includes(toolName)
         ) {
           logger.debug(`Tool "${toolName}": allowed (CLI)`);
-          return Promise.resolve({ permissionDecision: "allow" as const });
+          return Promise.resolve({
+            permissionDecision: "allow",
+          } satisfies PreToolUseResult);
         }
 
         for (const [serverName, server] of Object.entries(config.mcpServers)) {
           const allowlist = server.allowedTools ?? [];
           if (allowlist.includes("*") || allowlist.includes(toolName)) {
             logger.debug(`Tool "${toolName}": allowed (${serverName})`);
-            return Promise.resolve({ permissionDecision: "allow" as const });
+            return Promise.resolve({
+              permissionDecision: "allow",
+            } satisfies PreToolUseResult);
           }
         }
 
         logger.debug(`Tool "${toolName}": denied (not in any allowlist)`);
-        return Promise.resolve({ permissionDecision: "deny" as const });
+        return Promise.resolve({
+          permissionDecision: "deny",
+        } satisfies PreToolUseResult);
       },
 
       onPostToolUse: (input) => {
@@ -114,7 +136,10 @@ export function createSessionConfig({
           (input.errorContext === "model_call" ||
             input.errorContext === "tool_execution")
         ) {
-          return { errorHandling: "retry" as const, retryCount: 2 };
+          return {
+            errorHandling: "retry",
+            retryCount: 2,
+          } satisfies ErrorResult;
         }
         return undefined;
       },

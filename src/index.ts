@@ -72,7 +72,7 @@ export {
 } from "#/stats.js";
 
 // Logger
-export { Logger, LEVEL_PRIORITY, type LogLevel } from "#/logger.js";
+export { Logger, LOG_LEVELS, LEVEL_PRIORITY, type LogLevel } from "#/logger.js";
 
 // Config
 export {

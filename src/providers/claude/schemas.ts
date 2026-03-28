@@ -129,7 +129,7 @@ function filterUnknownBlocks(data: BaseAnthropicRequest): AnthropicRequest {
               KNOWN_BLOCK_TYPES.has(b.type),
             ),
     })),
-  } as AnthropicRequest;
+  } satisfies AnthropicRequest;
 }
 
 export const AnthropicRequestSchema =

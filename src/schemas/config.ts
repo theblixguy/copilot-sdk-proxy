@@ -4,18 +4,18 @@ export const MCPLocalServerSchema = z.object({
   type: z.union([z.literal("local"), z.literal("stdio")]),
   command: z.string().min(1, "MCP server command cannot be empty"),
   args: z.array(z.string()),
-  env: z.record(z.string(), z.string()).optional(),
-  cwd: z.string().optional(),
-  allowedTools: z.array(z.string()).optional(),
-  timeout: z.number().positive().optional(),
+  env: z.record(z.string(), z.string()).exactOptional(),
+  cwd: z.string().exactOptional(),
+  allowedTools: z.array(z.string()).exactOptional(),
+  timeout: z.number().positive().exactOptional(),
 });
 
 export const MCPRemoteServerSchema = z.object({
   type: z.union([z.literal("http"), z.literal("sse")]),
   url: z.url(),
-  headers: z.record(z.string(), z.string()).optional(),
-  allowedTools: z.array(z.string()).optional(),
-  timeout: z.number().positive().optional(),
+  headers: z.record(z.string(), z.string()).exactOptional(),
+  allowedTools: z.array(z.string()).exactOptional(),
+  timeout: z.number().positive().exactOptional(),
 });
 
 export const MCPServerSchema = z.union([
@@ -73,7 +73,7 @@ export const ServerConfigSchema = z.object({
     .max(100, "bodyLimit cannot exceed 100")
     .default(10),
   requestTimeout: z.number().min(0, "requestTimeout must be >= 0").default(0),
-  reasoningEffort: ReasoningEffortSchema.optional(),
+  reasoningEffort: ReasoningEffortSchema.exactOptional(),
   autoApprovePermissions: ApprovalRuleSchema.default(true),
 });
 

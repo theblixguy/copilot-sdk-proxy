@@ -1,14 +1,12 @@
-import { LEVEL_PRIORITY, type LogLevel } from "#/logger.js";
+import { z } from "zod";
+import { LOG_LEVELS, type LogLevel } from "#/logger.js";
 import { PROVIDER_NAMES, type ProviderName } from "#/schemas/config.js";
 
-const VALID_LOG_LEVELS = Object.keys(LEVEL_PRIORITY) as LogLevel[];
-
-function isLogLevel(value: string): value is LogLevel {
-  return value in LEVEL_PRIORITY;
-}
+const LogLevelSchema = z.enum(LOG_LEVELS);
+const ProviderNameSchema = z.enum(PROVIDER_NAMES);
 
 export function isProviderName(value: string): value is ProviderName {
-  return (PROVIDER_NAMES as readonly string[]).includes(value);
+  return ProviderNameSchema.safeParse(value).success;
 }
 
 const MAX_PORT = 65535;
@@ -22,21 +20,23 @@ export function parsePort(value: string): number {
 }
 
 export function parseLogLevel(value: string): LogLevel {
-  if (!isLogLevel(value)) {
+  const result = LogLevelSchema.safeParse(value);
+  if (!result.success) {
     throw new Error(
-      `Invalid log level "${value}". Valid: ${VALID_LOG_LEVELS.join(", ")}`,
+      `Invalid log level "${value}". Valid: ${LOG_LEVELS.join(", ")}`,
     );
   }
-  return value;
+  return result.data;
 }
 
 export function parseProvider(value: string): ProviderName {
-  if (!isProviderName(value)) {
+  const result = ProviderNameSchema.safeParse(value);
+  if (!result.success) {
     throw new Error(
       `Invalid provider "${value}". Valid: ${PROVIDER_NAMES.join(", ")}`,
     );
   }
-  return value;
+  return result.data;
 }
 
 export function parseIdleTimeout(value: string): number {

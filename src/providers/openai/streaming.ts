@@ -73,18 +73,13 @@ export function handleStreaming(
   const completionId = `chatcmpl-${randomUUID()}`;
   const protocol = new OpenAIProtocol(completionId, model);
 
+  const delta: Partial<Message> = { role: "assistant" };
   const initialChunk = {
     id: completionId,
     object: "chat.completion.chunk" as const,
     created: currentTimestamp(),
     model,
-    choices: [
-      {
-        index: 0,
-        delta: { role: "assistant" } as Partial<Message>,
-        finish_reason: null,
-      },
-    ],
+    choices: [{ index: 0, delta, finish_reason: null }],
   } satisfies ChatCompletionChunk;
   reply.raw.write(`data: ${JSON.stringify(initialChunk)}\n\n`);
 

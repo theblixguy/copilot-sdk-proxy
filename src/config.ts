@@ -5,7 +5,6 @@ import JSON5 from "json5";
 import type { Logger } from "#/logger.js";
 import {
   ServerConfigSchema,
-  PROVIDER_NAMES,
   type ProviderName,
   type MCPServer,
   type RawServerConfig,
@@ -93,11 +92,7 @@ async function parseConfigFile(
   try {
     text = await readFile(absolutePath, "utf-8");
   } catch (err: unknown) {
-    if (
-      err instanceof Error &&
-      "code" in err &&
-      (err as NodeJS.ErrnoException).code === "ENOENT"
-    ) {
+    if (err instanceof Error && "code" in err && err.code === "ENOENT") {
       logger.warn(`No config file at ${absolutePath}, using defaults`);
       return null;
     }
@@ -141,7 +136,7 @@ function buildServerConfig(
   return {
     allowedCliTools: parsed.allowedCliTools,
     autoApprovePermissions: parsed.autoApprovePermissions,
-    reasoningEffort: parsed.reasoningEffort,
+    ...(parsed.reasoningEffort && { reasoningEffort: parsed.reasoningEffort }),
     bodyLimit: parsed.bodyLimit * BYTES_PER_MIB,
     requestTimeoutMs: parsed.requestTimeout * MS_PER_MINUTE,
     mcpServers: resolveServerPaths(parsed[provider].mcpServers, configDir),
@@ -168,14 +163,17 @@ export async function loadAllProviderConfigs(
   logger: Logger,
 ): Promise<AllProviderConfigs> {
   const result = await parseConfigFile(configPath, logger);
-  const providers = Object.fromEntries(
-    PROVIDER_NAMES.map((name) => [
-      name,
-      result
-        ? buildServerConfig(result.data, result.configDir, name)
-        : DEFAULT_CONFIG,
-    ]),
-  ) as Record<ProviderName, ServerConfig>;
+  const providers: Record<ProviderName, ServerConfig> = {
+    openai: result
+      ? buildServerConfig(result.data, result.configDir, "openai")
+      : DEFAULT_CONFIG,
+    claude: result
+      ? buildServerConfig(result.data, result.configDir, "claude")
+      : DEFAULT_CONFIG,
+    codex: result
+      ? buildServerConfig(result.data, result.configDir, "codex")
+      : DEFAULT_CONFIG,
+  };
 
   // Reuse buildServerConfig for shared fields, override mcpServers to empty.
   // The provider arg is arbitrary since shared fields are provider-independent.
