@@ -1,15 +1,24 @@
 import { bold, dim, red, yellow, cyan, symbols } from "#/ui.js";
 
-export const LEVEL_PRIORITY = {
+export const LOG_LEVELS = [
+  "none",
+  "error",
+  "warning",
+  "info",
+  "debug",
+  "all",
+] as const;
+
+export type LogLevel = (typeof LOG_LEVELS)[number];
+
+export const LEVEL_PRIORITY: Record<LogLevel, number> = {
   none: 0,
   error: 1,
   warning: 2,
   info: 3,
   debug: 4,
   all: 5,
-} as const satisfies Record<string, number>;
-
-export type LogLevel = keyof typeof LEVEL_PRIORITY;
+};
 
 const LEVEL_STYLE = {
   error: { label: red(bold("ERROR")), symbol: symbols.error },

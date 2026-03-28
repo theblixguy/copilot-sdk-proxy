@@ -9,18 +9,14 @@ export const SSE_HEADERS = {
   "X-Accel-Buffering": "no",
 } as const satisfies Record<string, string>;
 
-export function sendSSEEvent(
+export function sendSSEEvent<T extends object>(
   reply: FastifyReply,
   type: string,
-  data: object,
+  data: T,
   sequenceNumber?: number,
 ): void {
   if (sequenceNumber != null) {
-    const payload = {
-      ...(data as Record<string, unknown>),
-      type,
-      sequence_number: sequenceNumber,
-    };
+    const payload = { ...data, type, sequence_number: sequenceNumber };
     reply.raw.write(`event: ${type}\ndata: ${JSON.stringify(payload)}\n\n`);
   } else {
     reply.raw.write(`event: ${type}\ndata: ${JSON.stringify(data)}\n\n`);
