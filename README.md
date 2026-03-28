@@ -6,7 +6,7 @@ This is the shared core that [xcode-copilot-server](https://github.com/theblixgu
 
 ## Quick start
 
-You need [Node.js](https://nodejs.org) 25.6.0 or later and a GitHub Copilot subscription.
+You need [Node.js](https://nodejs.org) 22 or later and a GitHub Copilot subscription.
 
 **1. Authenticate** with one of these (you only need one):
 

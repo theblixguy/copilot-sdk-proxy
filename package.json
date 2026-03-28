@@ -23,7 +23,7 @@
     "codex"
   ],
   "engines": {
-    "node": "25.6.0"
+    "node": ">=22"
   },
   "bin": {
     "copilot-proxy": "dist/cli.js"
