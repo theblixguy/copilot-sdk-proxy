@@ -69,7 +69,7 @@
   "devDependencies": {
     "@types/node": "25.5.0",
     "llm-mock-server": "1.0.6",
-    "oxfmt": "0.42.0",
+    "oxfmt": "0.43.0",
     "oxlint": "1.57.0",
     "tsx": "4.21.0",
     "typescript": "6.0.2",
