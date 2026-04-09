@@ -70,7 +70,7 @@
     "zod": "4.3.6"
   },
   "devDependencies": {
-    "@types/node": "25.5.0",
+    "@types/node": "25.5.2",
     "llm-mock-server": "1.0.6",
     "oxfmt": "0.42.0",
     "oxlint": "1.57.0",
