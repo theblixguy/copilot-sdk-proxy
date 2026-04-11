@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { startReply, AnthropicProtocol } from "#/providers/claude/streaming.js";
+import { startReply, AnthropicProtocol } from "#providers/claude/streaming.js";
 
 function mockReply() {
   const written: string[] = [];

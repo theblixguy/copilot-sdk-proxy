@@ -1,26 +1,26 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import type { CopilotSession } from "@github/copilot-sdk";
-import type { AppContext } from "#/context.js";
+import type { AppContext } from "#context.js";
 import type {
   Conversation,
   ConversationManager,
-} from "#/conversation-manager.js";
-import { ResponsesRequestSchema } from "#/providers/codex/schemas.js";
-import { genId } from "#/providers/codex/schemas.js";
-import type { ResponsesRequest } from "#/providers/codex/schemas.js";
+} from "#conversation-manager.js";
+import { ResponsesRequestSchema } from "#providers/codex/schemas.js";
+import { genId } from "#providers/codex/schemas.js";
+import type { ResponsesRequest } from "#providers/codex/schemas.js";
 import {
   formatResponsesPrompt,
   extractInstructions,
-} from "#/providers/codex/prompt.js";
-import { handleResponsesStreaming } from "#/providers/codex/streaming.js";
+} from "#providers/codex/prompt.js";
+import { handleResponsesStreaming } from "#providers/codex/streaming.js";
 import {
   sendOpenAIError as sendError,
   validateRequest,
-} from "#/providers/shared/errors.js";
+} from "#providers/shared/errors.js";
 import {
   runHandlerPipeline,
   type BaseHandlerOptions,
-} from "#/providers/shared/handler-core.js";
+} from "#providers/shared/handler-core.js";
 
 export interface ResponsesHandlerOptions extends Omit<
   BaseHandlerOptions<ResponsesRequest>,

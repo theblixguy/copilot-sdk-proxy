@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { Stats } from "#/stats.js";
+import { Stats } from "#stats.js";
 
 describe("Stats", () => {
   afterEach(() => {

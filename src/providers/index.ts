@@ -1,10 +1,10 @@
-import { openaiProvider } from "#/providers/openai/provider.js";
-import { claudeProvider } from "#/providers/claude/provider.js";
-import { codexProvider } from "#/providers/codex/provider.js";
-import type { Provider } from "#/providers/types.js";
-import type { AppContext } from "#/context.js";
-import type { ServerConfig } from "#/config.js";
-import { PROVIDER_NAMES, type ProviderName } from "#/schemas/config.js";
+import { openaiProvider } from "#providers/openai/provider.js";
+import { claudeProvider } from "#providers/claude/provider.js";
+import { codexProvider } from "#providers/codex/provider.js";
+import type { Provider } from "#providers/types.js";
+import type { AppContext } from "#context.js";
+import type { ServerConfig } from "#config.js";
+import { PROVIDER_NAMES, type ProviderName } from "#schemas/config.js";
 
 export const providers = {
   openai: openaiProvider,

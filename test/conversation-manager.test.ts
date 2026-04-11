@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { DefaultConversationManager } from "#/conversation-manager.js";
-import { Logger } from "#/logger.js";
+import { DefaultConversationManager } from "#conversation-manager.js";
+import { Logger } from "#logger.js";
 
 const logger = new Logger("none");
 

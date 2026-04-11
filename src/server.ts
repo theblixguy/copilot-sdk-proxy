@@ -1,8 +1,8 @@
 import Fastify, { type FastifyInstance } from "fastify";
 import cors from "@fastify/cors";
-import type { AppContext } from "#/context.js";
-import type { LogLevel } from "#/logger.js";
-import type { Provider } from "#/providers/types.js";
+import type { AppContext } from "#context.js";
+import type { LogLevel } from "#logger.js";
+import type { Provider } from "#providers/types.js";
 
 const PINO_LEVEL = {
   none: "silent",

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { ServerConfigSchema } from "#/schemas/config.js";
+import { ServerConfigSchema } from "#schemas/config.js";
 
 describe("ServerConfigSchema", () => {
   it("provides defaults for all fields", () => {

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { extractContentText } from "#/providers/openai/schemas.js";
-import { formatPrompt } from "#/providers/openai/prompt.js";
-import type { Message } from "#/providers/openai/schemas.js";
+import { extractContentText } from "#providers/openai/schemas.js";
+import { formatPrompt } from "#providers/openai/prompt.js";
+import type { Message } from "#providers/openai/schemas.js";
 
 describe("extractContentText", () => {
   it("returns string content as-is", () => {

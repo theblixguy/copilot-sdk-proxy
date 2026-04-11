@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { openaiProvider } from "#/providers/openai/provider.js";
+import { openaiProvider } from "#providers/openai/provider.js";
 import {
   TIMEOUT,
   OPENAI_MODEL,

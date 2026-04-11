@@ -1,7 +1,7 @@
 import type {
   AnthropicMessage,
   ContentBlock,
-} from "#/providers/claude/schemas.js";
+} from "#providers/claude/schemas.js";
 
 function extractToolResultText(
   content: string | { type: "text"; text: string }[] | undefined,

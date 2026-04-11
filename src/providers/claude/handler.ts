@@ -1,21 +1,21 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
-import type { AppContext } from "#/context.js";
-import type { ConversationManager } from "#/conversation-manager.js";
+import type { AppContext } from "#context.js";
+import type { ConversationManager } from "#conversation-manager.js";
 import {
   AnthropicRequestSchema,
   extractAnthropicSystem,
-} from "#/providers/claude/schemas.js";
-import type { AnthropicRequest } from "#/providers/claude/schemas.js";
-import { formatAnthropicPrompt } from "#/providers/claude/prompt.js";
-import { handleAnthropicStreaming } from "#/providers/claude/streaming.js";
+} from "#providers/claude/schemas.js";
+import type { AnthropicRequest } from "#providers/claude/schemas.js";
+import { formatAnthropicPrompt } from "#providers/claude/prompt.js";
+import { handleAnthropicStreaming } from "#providers/claude/streaming.js";
 import {
   sendAnthropicError as sendError,
   validateRequest,
-} from "#/providers/shared/errors.js";
+} from "#providers/shared/errors.js";
 import {
   runHandlerPipeline,
   type BaseHandlerOptions,
-} from "#/providers/shared/handler-core.js";
+} from "#providers/shared/handler-core.js";
 
 export type MessagesHandlerOptions = BaseHandlerOptions<AnthropicRequest>;
 

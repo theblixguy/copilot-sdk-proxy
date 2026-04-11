@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
 import type { SessionEvent } from "@github/copilot-sdk";
-import { createCommonEventHandler } from "#/providers/shared/streaming-core.js";
-import type { StreamProtocol } from "#/providers/shared/streaming-core.js";
-import { Stats } from "#/stats.js";
-import { Logger } from "#/logger.js";
+import { createCommonEventHandler } from "#providers/shared/streaming-core.js";
+import type { StreamProtocol } from "#providers/shared/streaming-core.js";
+import { Stats } from "#stats.js";
+import { Logger } from "#logger.js";
 
 const BASE = {
   id: "e1",

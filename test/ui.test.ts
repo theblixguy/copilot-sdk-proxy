@@ -13,8 +13,8 @@ import {
   printUsageSummary,
   symbols,
   type BannerInfo,
-} from "#/ui.js";
-import type { StatsSnapshot } from "#/stats.js";
+} from "#ui.js";
+import type { StatsSnapshot } from "#stats.js";
 
 // eslint-disable-next-line no-control-regex
 const ANSI_RE = /\x1b\[[0-9;]*m/g;

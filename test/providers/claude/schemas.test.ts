@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   AnthropicRequestSchema,
   extractAnthropicSystem,
-} from "#/providers/claude/schemas.js";
+} from "#providers/claude/schemas.js";
 
 describe("AnthropicRequestSchema", () => {
   const validRequest = {

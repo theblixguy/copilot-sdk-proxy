@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import type { AppContext } from "#/context.js";
+import type { AppContext } from "#context.js";
 
 export interface Provider {
   name: string;

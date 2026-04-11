@@ -85,7 +85,7 @@ export interface ResponseObject {
   error?: { code: string; message: string } | null;
 }
 
-export { currentTimestamp } from "#/providers/shared/streaming-utils.js";
+export { currentTimestamp } from "#providers/shared/streaming-utils.js";
 
 export function genId(prefix: string): string {
   return `${prefix}_${randomUUID()}`;

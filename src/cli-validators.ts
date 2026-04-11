@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { LOG_LEVELS, type LogLevel } from "#/logger.js";
-import { PROVIDER_NAMES, type ProviderName } from "#/schemas/config.js";
+import { LOG_LEVELS, type LogLevel } from "#logger.js";
+import { PROVIDER_NAMES, type ProviderName } from "#schemas/config.js";
 
 const LogLevelSchema = z.enum(LOG_LEVELS);
 const ProviderNameSchema = z.enum(PROVIDER_NAMES);

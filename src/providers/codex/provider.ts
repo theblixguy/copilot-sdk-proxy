@@ -1,6 +1,6 @@
-import type { Provider } from "#/providers/types.js";
-import { createResponsesHandler } from "#/providers/codex/handler.js";
-import { DefaultConversationManager } from "#/conversation-manager.js";
+import type { Provider } from "#providers/types.js";
+import { createResponsesHandler } from "#providers/codex/handler.js";
+import { DefaultConversationManager } from "#conversation-manager.js";
 
 export const codexProvider = {
   name: "Codex",

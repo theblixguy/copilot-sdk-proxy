@@ -3,8 +3,8 @@ import {
   loadConfig,
   loadAllProviderConfigs,
   resolveConfigPath,
-} from "#/config.js";
-import { Logger } from "#/logger.js";
+} from "#config.js";
+import { Logger } from "#logger.js";
 
 vi.mock("node:fs", () => ({
   existsSync: vi.fn(),

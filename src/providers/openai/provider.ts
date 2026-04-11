@@ -1,7 +1,7 @@
-import type { Provider } from "#/providers/types.js";
-import { createModelsHandler } from "#/providers/openai/models.js";
-import { createCompletionsHandler } from "#/providers/openai/handler.js";
-import { DefaultConversationManager } from "#/conversation-manager.js";
+import type { Provider } from "#providers/types.js";
+import { createModelsHandler } from "#providers/openai/models.js";
+import { createCompletionsHandler } from "#providers/openai/handler.js";
+import { DefaultConversationManager } from "#conversation-manager.js";
 
 export const openaiProvider = {
   name: "OpenAI",

@@ -2,15 +2,15 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
   runHandlerPipeline,
   type HandlerPipeline,
-} from "#/providers/shared/handler-core.js";
-import type { AppContext } from "#/context.js";
+} from "#providers/shared/handler-core.js";
+import type { AppContext } from "#context.js";
 import type {
   Conversation,
   ConversationManager,
-} from "#/conversation-manager.js";
+} from "#conversation-manager.js";
 import type { CopilotSession, ModelInfo } from "@github/copilot-sdk";
-import { Logger } from "#/logger.js";
-import { Stats } from "#/stats.js";
+import { Logger } from "#logger.js";
+import { Stats } from "#stats.js";
 
 const logger = new Logger("none");
 

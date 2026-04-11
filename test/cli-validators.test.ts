@@ -5,7 +5,7 @@ import {
   parseProvider,
   parseIdleTimeout,
   isProviderName,
-} from "#/cli-validators.js";
+} from "#cli-validators.js";
 
 describe("parsePort", () => {
   it("parses a valid port", () => {

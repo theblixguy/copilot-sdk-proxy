@@ -1,12 +1,12 @@
 import { randomUUID } from "node:crypto";
 import type { FastifyReply } from "fastify";
 import type { CopilotSession } from "@github/copilot-sdk";
-import type { Logger } from "#/logger.js";
-import type { Stats } from "#/stats.js";
+import type { Logger } from "#logger.js";
+import type { Stats } from "#stats.js";
 import {
   SSE_HEADERS,
   sendSSEEvent as sendEvent,
-} from "#/providers/shared/streaming-utils.js";
+} from "#providers/shared/streaming-utils.js";
 import type {
   MessageStartEvent,
   ContentBlockStartEvent,
@@ -14,9 +14,9 @@ import type {
   ContentBlockStopEvent,
   MessageDeltaEvent,
   MessageStopEvent,
-} from "#/providers/claude/schemas.js";
-import type { StreamProtocol } from "#/providers/shared/streaming-core.js";
-import { runSessionStreaming } from "#/providers/shared/streaming-core.js";
+} from "#providers/claude/schemas.js";
+import type { StreamProtocol } from "#providers/shared/streaming-core.js";
+import { runSessionStreaming } from "#providers/shared/streaming-core.js";
 
 export function startReply(reply: FastifyReply, model: string): void {
   reply.raw.writeHead(200, SSE_HEADERS);

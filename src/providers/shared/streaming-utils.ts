@@ -1,6 +1,6 @@
 import type { FastifyReply } from "fastify";
-import type { Stats, UsageData } from "#/stats.js";
-import type { Logger } from "#/logger.js";
+import type { Stats, UsageData } from "#stats.js";
+import type { Logger } from "#logger.js";
 
 export const SSE_HEADERS = {
   "Content-Type": "text/event-stream",

@@ -4,7 +4,7 @@ import {
   filterFunctionTools,
   currentTimestamp,
   genId,
-} from "#/providers/codex/schemas.js";
+} from "#providers/codex/schemas.js";
 
 describe("ResponsesRequestSchema", () => {
   const validRequest = {

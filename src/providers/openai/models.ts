@@ -1,8 +1,8 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
-import type { AppContext } from "#/context.js";
-import { currentTimestamp } from "#/providers/openai/schemas.js";
-import type { ModelsResponse } from "#/providers/openai/schemas.js";
-import { sendOpenAIError } from "#/providers/shared/errors.js";
+import type { AppContext } from "#context.js";
+import { currentTimestamp } from "#providers/openai/schemas.js";
+import type { ModelsResponse } from "#providers/openai/schemas.js";
+import { sendOpenAIError } from "#providers/shared/errors.js";
 
 export function createModelsHandler({ service, logger }: AppContext) {
   return async function handleModels(
