@@ -236,10 +236,9 @@ describe("loadAllProviderConfigs", () => {
     expect(result.shared.bodyLimit).toBe(5 * 1024 * 1024);
   });
 
-  it("per-provider reasoningEffort overrides global", async () => {
+  it("loads per-provider reasoningEffort", async () => {
     mockReadFile.mockResolvedValue(
       JSON.stringify({
-        reasoningEffort: "high",
         openai: { reasoningEffort: "xhigh" },
         claude: { reasoningEffort: "max" },
       }) as never,
@@ -251,20 +250,6 @@ describe("loadAllProviderConfigs", () => {
     );
     expect(result.providers.openai.reasoningEffort).toBe("xhigh");
     expect(result.providers.claude.reasoningEffort).toBe("max");
-    expect(result.providers.codex.reasoningEffort).toBe("high");
-  });
-
-  it("uses global reasoningEffort when provider does not override", async () => {
-    mockReadFile.mockResolvedValue(
-      JSON.stringify({ reasoningEffort: "medium" }) as never,
-    );
-
-    const result = await loadAllProviderConfigs(
-      "/project/config.json5",
-      logger,
-    );
-    expect(result.providers.openai.reasoningEffort).toBe("medium");
-    expect(result.providers.claude.reasoningEffort).toBe("medium");
-    expect(result.providers.codex.reasoningEffort).toBe("medium");
+    expect(result.providers.codex.reasoningEffort).toBeUndefined();
   });
 });

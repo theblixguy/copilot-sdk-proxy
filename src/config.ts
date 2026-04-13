@@ -7,6 +7,7 @@ import {
   ServerConfigSchema,
   type ProviderName,
   type MCPServer,
+  type ReasoningEffort,
   type RawServerConfig,
 } from "#schemas/config.js";
 
@@ -27,6 +28,7 @@ export type ServerConfig = Omit<
 > & {
   mcpServers: Record<string, MCPServer>;
   requestTimeoutMs: number;
+  reasoningEffort?: ReasoningEffort;
 };
 
 const BYTES_PER_MIB = 1024 * 1024;
@@ -133,8 +135,7 @@ function buildServerConfig(
   configDir: string,
   provider: ProviderName,
 ): ServerConfig {
-  const reasoningEffort =
-    parsed[provider].reasoningEffort ?? parsed.reasoningEffort;
+  const { reasoningEffort } = parsed[provider];
   return {
     allowedCliTools: parsed.allowedCliTools,
     autoApprovePermissions: parsed.autoApprovePermissions,

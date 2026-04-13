@@ -25,14 +25,14 @@ describe("ServerConfigSchema", () => {
       },
       allowedCliTools: ["glob", "grep"],
       bodyLimit: 5,
-      reasoningEffort: "high",
+      claude: { reasoningEffort: "high" },
       autoApprovePermissions: ["read", "write"],
     });
     expect(result.openai.mcpServers.test).toBeDefined();
     expect(result.claude.mcpServers).toEqual({});
+    expect(result.claude.reasoningEffort).toBe("high");
     expect(result.allowedCliTools).toEqual(["glob", "grep"]);
     expect(result.bodyLimit).toBe(5);
-    expect(result.reasoningEffort).toBe("high");
     expect(result.autoApprovePermissions).toEqual(["read", "write"]);
   });
 
@@ -121,16 +121,25 @@ describe("ServerConfigSchema", () => {
     expect(result.autoApprovePermissions).toEqual(["read", "write", "shell"]);
   });
 
-  it("accepts valid global reasoning effort values", () => {
+  it("accepts valid reasoning effort values per provider", () => {
     for (const effort of ["low", "medium", "high", "xhigh", "max"]) {
-      const result = ServerConfigSchema.parse({ reasoningEffort: effort });
-      expect(result.reasoningEffort).toBe(effort);
+      const result = ServerConfigSchema.parse({
+        claude: { reasoningEffort: effort },
+      });
+      expect(result.claude.reasoningEffort).toBe(effort);
     }
   });
 
   it("rejects invalid reasoning effort value", () => {
-    const result = ServerConfigSchema.safeParse({ reasoningEffort: "extreme" });
+    const result = ServerConfigSchema.safeParse({
+      claude: { reasoningEffort: "extreme" },
+    });
     expect(result.success).toBe(false);
+  });
+
+  it("strips global reasoning effort (moved to per-provider)", () => {
+    const result = ServerConfigSchema.parse({ reasoningEffort: "high" });
+    expect("reasoningEffort" in result).toBe(false);
   });
 
   it("accepts per-provider reasoning effort", () => {

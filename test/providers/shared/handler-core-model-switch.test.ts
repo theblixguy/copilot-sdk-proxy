@@ -175,7 +175,7 @@ describe("model switching on reuse", () => {
     setModel = mock.setModel;
     const conv = createConversation({ model: "gpt-4", session: mock.session });
     const ctx = createCtx();
-    ctx.config.reasoningEffort = "high";
+    (ctx.config as Record<string, unknown>).reasoningEffort = "high";
     const mgr: ConversationManager = {
       findForNewRequest: () => ({ conversation: conv, isReuse: true }),
       remove: vi.fn(),

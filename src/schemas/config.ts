@@ -80,7 +80,6 @@ export const ServerConfigSchema = z.object({
     .max(100, "bodyLimit cannot exceed 100")
     .default(10),
   requestTimeout: z.number().min(0, "requestTimeout must be >= 0").default(0),
-  reasoningEffort: ReasoningEffortSchema.exactOptional(),
   autoApprovePermissions: ApprovalRuleSchema.default(true),
 });
 
