@@ -252,4 +252,19 @@ describe("loadAllProviderConfigs", () => {
     expect(result.providers.claude.reasoningEffort).toBe("max");
     expect(result.providers.codex.reasoningEffort).toBeUndefined();
   });
+
+  it("shared config does not carry provider-specific reasoningEffort", async () => {
+    mockReadFile.mockResolvedValue(
+      JSON.stringify({
+        openai: { reasoningEffort: "xhigh" },
+        claude: { reasoningEffort: "max" },
+      }) as never,
+    );
+
+    const result = await loadAllProviderConfigs(
+      "/project/config.json5",
+      logger,
+    );
+    expect(result.shared.reasoningEffort).toBeUndefined();
+  });
 });

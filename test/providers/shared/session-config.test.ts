@@ -1,5 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
-import { createSessionConfig } from "#providers/shared/session-config.js";
+import {
+  createSessionConfig,
+  toSdkEffort,
+} from "#providers/shared/session-config.js";
 import { Logger } from "#logger.js";
 import type { ServerConfig } from "#config.js";
 
@@ -420,5 +423,18 @@ describe("createSessionConfig", () => {
     );
     expect(output).toBeUndefined();
     expect(spy).toHaveBeenCalledWith(expect.stringContaining("system"));
+  });
+});
+
+describe("toSdkEffort", () => {
+  it("passes standard values through unchanged", () => {
+    expect(toSdkEffort("low")).toBe("low");
+    expect(toSdkEffort("medium")).toBe("medium");
+    expect(toSdkEffort("high")).toBe("high");
+    expect(toSdkEffort("xhigh")).toBe("xhigh");
+  });
+
+  it("passes 'max' through for the Copilot backend", () => {
+    expect(toSdkEffort("max")).toBe("max");
   });
 });
