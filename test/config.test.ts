@@ -235,4 +235,36 @@ describe("loadAllProviderConfigs", () => {
     expect(result.shared.allowedCliTools).toEqual(["glob"]);
     expect(result.shared.bodyLimit).toBe(5 * 1024 * 1024);
   });
+
+  it("loads per-provider reasoningEffort", async () => {
+    mockReadFile.mockResolvedValue(
+      JSON.stringify({
+        openai: { reasoningEffort: "xhigh" },
+        claude: { reasoningEffort: "max" },
+      }) as never,
+    );
+
+    const result = await loadAllProviderConfigs(
+      "/project/config.json5",
+      logger,
+    );
+    expect(result.providers.openai.reasoningEffort).toBe("xhigh");
+    expect(result.providers.claude.reasoningEffort).toBe("max");
+    expect(result.providers.codex.reasoningEffort).toBeUndefined();
+  });
+
+  it("shared config does not carry provider-specific reasoningEffort", async () => {
+    mockReadFile.mockResolvedValue(
+      JSON.stringify({
+        openai: { reasoningEffort: "xhigh" },
+        claude: { reasoningEffort: "max" },
+      }) as never,
+    );
+
+    const result = await loadAllProviderConfigs(
+      "/project/config.json5",
+      logger,
+    );
+    expect(result.shared.reasoningEffort).toBeUndefined();
+  });
 });

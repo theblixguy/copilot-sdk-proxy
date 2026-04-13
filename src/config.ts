@@ -7,6 +7,7 @@ import {
   ServerConfigSchema,
   type ProviderName,
   type MCPServer,
+  type ReasoningEffort,
   type RawServerConfig,
 } from "#schemas/config.js";
 
@@ -27,6 +28,7 @@ export type ServerConfig = Omit<
 > & {
   mcpServers: Record<string, MCPServer>;
   requestTimeoutMs: number;
+  reasoningEffort?: ReasoningEffort;
 };
 
 const BYTES_PER_MIB = 1024 * 1024;
@@ -133,10 +135,11 @@ function buildServerConfig(
   configDir: string,
   provider: ProviderName,
 ): ServerConfig {
+  const { reasoningEffort } = parsed[provider];
   return {
     allowedCliTools: parsed.allowedCliTools,
     autoApprovePermissions: parsed.autoApprovePermissions,
-    ...(parsed.reasoningEffort && { reasoningEffort: parsed.reasoningEffort }),
+    ...(reasoningEffort && { reasoningEffort }),
     bodyLimit: parsed.bodyLimit * BYTES_PER_MIB,
     requestTimeoutMs: parsed.requestTimeout * MS_PER_MINUTE,
     mcpServers: resolveServerPaths(parsed[provider].mcpServers, configDir),
@@ -175,11 +178,13 @@ export async function loadAllProviderConfigs(
       : DEFAULT_CONFIG,
   };
 
-  // Reuse buildServerConfig for shared fields, override mcpServers to empty.
-  // The provider arg is arbitrary since shared fields are provider-independent.
+  // Shared config carries only provider-independent fields.
   const shared: ServerConfig = result
     ? {
-        ...buildServerConfig(result.data, result.configDir, "openai"),
+        allowedCliTools: result.data.allowedCliTools,
+        autoApprovePermissions: result.data.autoApprovePermissions,
+        bodyLimit: result.data.bodyLimit * BYTES_PER_MIB,
+        requestTimeoutMs: result.data.requestTimeout * MS_PER_MINUTE,
         mcpServers: {},
       }
     : DEFAULT_CONFIG;

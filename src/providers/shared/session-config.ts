@@ -12,8 +12,16 @@ type PreToolUseResult = NonNullable<
 type ErrorResult = NonNullable<
   Awaited<NonNullable<ReturnType<NonNullable<Hooks["onErrorOccurred"]>>>>
 >;
-import type { ServerConfig, ApprovalRule } from "#config.js";
+import type { ServerConfig, ApprovalRule, ReasoningEffort } from "#config.js";
 import type { Logger } from "#logger.js";
+
+type SdkReasoningEffort = NonNullable<SessionConfig["reasoningEffort"]>;
+
+// The SDK type doesn't include "max" but the Copilot backend accepts it
+// for Claude models. Cast our broader type to the SDK's narrower type.
+export function toSdkEffort(effort: ReasoningEffort): SdkReasoningEffort {
+  return effort as SdkReasoningEffort;
+}
 
 export interface SessionConfigOptions {
   model: string;
@@ -66,7 +74,7 @@ export function createSessionConfig({
     }),
     ...(config.reasoningEffort &&
       supportsReasoningEffort && {
-        reasoningEffort: config.reasoningEffort,
+        reasoningEffort: toSdkEffort(config.reasoningEffort),
       }),
 
     onUserInputRequest: (request) => {

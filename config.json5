@@ -12,24 +12,24 @@
   //     },
   //   },
   // },
-  openai: { mcpServers: {} },
-  claude: { mcpServers: {} },
-  codex: { mcpServers: {} },
+  // Reasoning effort for models that support it.
+  // OpenAI models accept: "low", "medium", "high", "xhigh"
+  // Claude models accept: "low", "medium", "high", "max"
+  claude: { mcpServers: {}, reasoningEffort: "max" },
+  codex: { mcpServers: {}, reasoningEffort: "xhigh" },
+  openai: { mcpServers: {}, reasoningEffort: "xhigh" },
 
   // Built-in Copilot CLI tools allowlist. Use ["*"] to allow all, [] to deny
   // all, or list specific tools like ["glob", "grep", "bash"].
   allowedCliTools: ["*"],
+
+  // Auto-approve permission requests. Set to true to approve all, false to deny
+  // all, or pass an array of specific kinds: ["read", "write", "shell", "mcp", "url"].
+  autoApprovePermissions: true,
 
   // Maximum request body size in MiB.
   bodyLimit: 10,
 
   // Server-level request timeout in minutes. 0: disabled.
   requestTimeout: 0,
-
-  // Reasoning effort for models that support it: "low", "medium", "high", "xhigh".
-  // reasoningEffort: null,
-
-  // Auto-approve permission requests. Set to true to approve all, false to deny
-  // all, or pass an array of specific kinds: ["read", "write", "shell", "mcp", "url"].
-  autoApprovePermissions: true,
 }

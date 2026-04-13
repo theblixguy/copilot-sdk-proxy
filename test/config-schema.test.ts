@@ -25,14 +25,14 @@ describe("ServerConfigSchema", () => {
       },
       allowedCliTools: ["glob", "grep"],
       bodyLimit: 5,
-      reasoningEffort: "high",
+      claude: { reasoningEffort: "high" },
       autoApprovePermissions: ["read", "write"],
     });
     expect(result.openai.mcpServers.test).toBeDefined();
     expect(result.claude.mcpServers).toEqual({});
+    expect(result.claude.reasoningEffort).toBe("high");
     expect(result.allowedCliTools).toEqual(["glob", "grep"]);
     expect(result.bodyLimit).toBe(5);
-    expect(result.reasoningEffort).toBe("high");
     expect(result.autoApprovePermissions).toEqual(["read", "write"]);
   });
 
@@ -121,16 +121,39 @@ describe("ServerConfigSchema", () => {
     expect(result.autoApprovePermissions).toEqual(["read", "write", "shell"]);
   });
 
-  it("accepts valid reasoning effort values", () => {
-    for (const effort of ["low", "medium", "high", "xhigh"]) {
-      const result = ServerConfigSchema.parse({ reasoningEffort: effort });
-      expect(result.reasoningEffort).toBe(effort);
+  it("accepts valid reasoning effort values per provider", () => {
+    for (const effort of ["low", "medium", "high", "xhigh", "max"]) {
+      const result = ServerConfigSchema.parse({
+        claude: { reasoningEffort: effort },
+      });
+      expect(result.claude.reasoningEffort).toBe(effort);
     }
   });
 
   it("rejects invalid reasoning effort value", () => {
-    const result = ServerConfigSchema.safeParse({ reasoningEffort: "extreme" });
+    const result = ServerConfigSchema.safeParse({
+      claude: { reasoningEffort: "extreme" },
+    });
     expect(result.success).toBe(false);
+  });
+
+  it("accepts per-provider reasoning effort", () => {
+    const result = ServerConfigSchema.parse({
+      openai: { reasoningEffort: "xhigh" },
+      claude: { reasoningEffort: "max" },
+    });
+    expect(result.openai.reasoningEffort).toBe("xhigh");
+    expect(result.claude.reasoningEffort).toBe("max");
+    expect(result.codex.reasoningEffort).toBeUndefined();
+  });
+
+  it("per-provider reasoning effort is optional", () => {
+    const result = ServerConfigSchema.parse({
+      openai: {},
+      claude: { reasoningEffort: "high" },
+    });
+    expect(result.openai.reasoningEffort).toBeUndefined();
+    expect(result.claude.reasoningEffort).toBe("high");
   });
 
   it("rejects MCP server with empty command", () => {

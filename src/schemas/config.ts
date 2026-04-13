@@ -36,7 +36,13 @@ export const ApprovalRuleSchema = z.union([
   z.array(z.enum(VALID_PERMISSION_KINDS)),
 ]);
 
-const VALID_REASONING_EFFORTS = ["low", "medium", "high", "xhigh"] as const;
+const VALID_REASONING_EFFORTS = [
+  "low",
+  "medium",
+  "high",
+  "xhigh",
+  "max",
+] as const;
 
 export const ReasoningEffortSchema = z.enum(VALID_REASONING_EFFORTS);
 
@@ -48,6 +54,7 @@ export type ReasoningEffort = z.infer<typeof ReasoningEffortSchema>;
 
 export const ProviderConfigSchema = z.object({
   mcpServers: z.record(z.string(), MCPServerSchema).default({}),
+  reasoningEffort: ReasoningEffortSchema.exactOptional(),
 });
 
 export const PROVIDER_NAMES = ["openai", "claude", "codex"] as const;
@@ -56,25 +63,26 @@ export type ProviderMode = ProviderName | "auto";
 
 const PROVIDER_DEFAULTS = { mcpServers: {} };
 
-export const ServerConfigSchema = z.object({
-  openai: ProviderConfigSchema.default(PROVIDER_DEFAULTS),
-  claude: ProviderConfigSchema.default(PROVIDER_DEFAULTS),
-  codex: ProviderConfigSchema.default(PROVIDER_DEFAULTS),
-  allowedCliTools: z
-    .array(z.string())
-    .refine(
-      (arr) => !arr.includes("*") || arr.length === 1,
-      'allowedCliTools: use ["*"] alone to allow all tools, don\'t mix with other entries',
-    )
-    .default([]),
-  bodyLimit: z
-    .number()
-    .positive()
-    .max(100, "bodyLimit cannot exceed 100")
-    .default(10),
-  requestTimeout: z.number().min(0, "requestTimeout must be >= 0").default(0),
-  reasoningEffort: ReasoningEffortSchema.exactOptional(),
-  autoApprovePermissions: ApprovalRuleSchema.default(true),
-});
+export const ServerConfigSchema = z
+  .object({
+    openai: ProviderConfigSchema.default(PROVIDER_DEFAULTS),
+    claude: ProviderConfigSchema.default(PROVIDER_DEFAULTS),
+    codex: ProviderConfigSchema.default(PROVIDER_DEFAULTS),
+    allowedCliTools: z
+      .array(z.string())
+      .refine(
+        (arr) => !arr.includes("*") || arr.length === 1,
+        'allowedCliTools: use ["*"] alone to allow all tools, don\'t mix with other entries',
+      )
+      .default([]),
+    bodyLimit: z
+      .number()
+      .positive()
+      .max(100, "bodyLimit cannot exceed 100")
+      .default(10),
+    requestTimeout: z.number().min(0, "requestTimeout must be >= 0").default(0),
+    autoApprovePermissions: ApprovalRuleSchema.default(true),
+  })
+  .strict();
 
 export type RawServerConfig = z.infer<typeof ServerConfigSchema>;

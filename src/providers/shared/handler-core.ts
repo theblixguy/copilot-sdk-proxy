@@ -7,7 +7,10 @@ import type {
 } from "#conversation-manager.js";
 import type { Logger } from "#logger.js";
 import type { Stats } from "#stats.js";
-import type { SessionConfigOptions } from "#providers/shared/session-config.js";
+import {
+  type SessionConfigOptions,
+  toSdkEffort,
+} from "#providers/shared/session-config.js";
 import {
   normalizeModelId,
   resolveModelForSession,
@@ -122,7 +125,7 @@ export function runHandlerPipeline<
           await conversation.session.setModel(resolved.model, {
             ...(resolved.supportsReasoningEffort &&
               config.reasoningEffort && {
-                reasoningEffort: config.reasoningEffort,
+                reasoningEffort: toSdkEffort(config.reasoningEffort),
               }),
           });
           logger.info(

@@ -1,5 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
-import { createSessionConfig } from "#providers/shared/session-config.js";
+import {
+  createSessionConfig,
+  toSdkEffort,
+} from "#providers/shared/session-config.js";
 import { Logger } from "#logger.js";
 import type { ServerConfig } from "#config.js";
 
@@ -92,6 +95,28 @@ describe("createSessionConfig", () => {
       supportsReasoningEffort: true,
     });
     expect(result.reasoningEffort).toBe("high");
+  });
+
+  it("passes 'max' reasoning effort through to the SDK", () => {
+    const config = defaultConfig({ reasoningEffort: "max" });
+    const result = createSessionConfig({
+      model: "claude-opus-4.6",
+      logger,
+      config,
+      supportsReasoningEffort: true,
+    });
+    expect(result.reasoningEffort).toBe("max");
+  });
+
+  it("passes 'xhigh' reasoning effort through to the SDK", () => {
+    const config = defaultConfig({ reasoningEffort: "xhigh" });
+    const result = createSessionConfig({
+      model: "o1",
+      logger,
+      config,
+      supportsReasoningEffort: true,
+    });
+    expect(result.reasoningEffort).toBe("xhigh");
   });
 
   it("omits reasoning effort when model does not support it", () => {
@@ -398,5 +423,18 @@ describe("createSessionConfig", () => {
     );
     expect(output).toBeUndefined();
     expect(spy).toHaveBeenCalledWith(expect.stringContaining("system"));
+  });
+});
+
+describe("toSdkEffort", () => {
+  it("passes standard values through unchanged", () => {
+    expect(toSdkEffort("low")).toBe("low");
+    expect(toSdkEffort("medium")).toBe("medium");
+    expect(toSdkEffort("high")).toBe("high");
+    expect(toSdkEffort("xhigh")).toBe("xhigh");
+  });
+
+  it("passes 'max' through for the Copilot backend", () => {
+    expect(toSdkEffort("max")).toBe("max");
   });
 });
