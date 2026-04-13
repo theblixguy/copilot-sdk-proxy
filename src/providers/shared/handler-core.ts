@@ -122,7 +122,10 @@ export function runHandlerPipeline<
           await conversation.session.setModel(resolved.model, {
             ...(resolved.supportsReasoningEffort &&
               config.reasoningEffort && {
-                reasoningEffort: config.reasoningEffort,
+                reasoningEffort: config.reasoningEffort as
+                  | "low"
+                  | "medium"
+                  | "high",
               }),
           });
           logger.info(

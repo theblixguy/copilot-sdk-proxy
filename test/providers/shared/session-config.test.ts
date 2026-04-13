@@ -94,6 +94,28 @@ describe("createSessionConfig", () => {
     expect(result.reasoningEffort).toBe("high");
   });
 
+  it("passes 'max' reasoning effort through to the SDK", () => {
+    const config = defaultConfig({ reasoningEffort: "max" });
+    const result = createSessionConfig({
+      model: "claude-opus-4.6",
+      logger,
+      config,
+      supportsReasoningEffort: true,
+    });
+    expect(result.reasoningEffort).toBe("max");
+  });
+
+  it("passes 'xhigh' reasoning effort through to the SDK", () => {
+    const config = defaultConfig({ reasoningEffort: "xhigh" });
+    const result = createSessionConfig({
+      model: "o1",
+      logger,
+      config,
+      supportsReasoningEffort: true,
+    });
+    expect(result.reasoningEffort).toBe("xhigh");
+  });
+
   it("omits reasoning effort when model does not support it", () => {
     const config = defaultConfig({ reasoningEffort: "high" });
     const result = createSessionConfig({

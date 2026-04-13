@@ -133,10 +133,12 @@ function buildServerConfig(
   configDir: string,
   provider: ProviderName,
 ): ServerConfig {
+  const reasoningEffort =
+    parsed[provider].reasoningEffort ?? parsed.reasoningEffort;
   return {
     allowedCliTools: parsed.allowedCliTools,
     autoApprovePermissions: parsed.autoApprovePermissions,
-    ...(parsed.reasoningEffort && { reasoningEffort: parsed.reasoningEffort }),
+    ...(reasoningEffort && { reasoningEffort }),
     bodyLimit: parsed.bodyLimit * BYTES_PER_MIB,
     requestTimeoutMs: parsed.requestTimeout * MS_PER_MINUTE,
     mcpServers: resolveServerPaths(parsed[provider].mcpServers, configDir),

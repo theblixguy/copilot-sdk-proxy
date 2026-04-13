@@ -66,7 +66,9 @@ export function createSessionConfig({
     }),
     ...(config.reasoningEffort &&
       supportsReasoningEffort && {
-        reasoningEffort: config.reasoningEffort,
+        // Cast: our schema accepts "max" which the SDK type doesn't include,
+        // but the Copilot backend accepts it for Claude models.
+        reasoningEffort: config.reasoningEffort as "low" | "medium" | "high",
       }),
 
     onUserInputRequest: (request) => {

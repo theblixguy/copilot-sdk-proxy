@@ -36,7 +36,13 @@ export const ApprovalRuleSchema = z.union([
   z.array(z.enum(VALID_PERMISSION_KINDS)),
 ]);
 
-const VALID_REASONING_EFFORTS = ["low", "medium", "high", "xhigh"] as const;
+const VALID_REASONING_EFFORTS = [
+  "low",
+  "medium",
+  "high",
+  "xhigh",
+  "max",
+] as const;
 
 export const ReasoningEffortSchema = z.enum(VALID_REASONING_EFFORTS);
 
@@ -48,6 +54,7 @@ export type ReasoningEffort = z.infer<typeof ReasoningEffortSchema>;
 
 export const ProviderConfigSchema = z.object({
   mcpServers: z.record(z.string(), MCPServerSchema).default({}),
+  reasoningEffort: ReasoningEffortSchema.exactOptional(),
 });
 
 export const PROVIDER_NAMES = ["openai", "claude", "codex"] as const;
