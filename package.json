@@ -73,7 +73,7 @@
     "@types/node": "25.5.2",
     "llm-mock-server": "1.0.8",
     "oxfmt": "0.44.0",
-    "oxlint": "1.59.0",
+    "oxlint": "1.60.0",
     "tsx": "4.21.0",
     "typescript": "6.0.2",
     "vitest": "4.1.4"
