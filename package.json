@@ -67,7 +67,7 @@
     "llm-schemas": "1.0.5",
     "picocolors": "1.1.1",
     "tokenx": "1.3.0",
-    "zod": "4.4.2"
+    "zod": "4.4.3"
   },
   "devDependencies": {
     "@types/node": "25.6.0",
