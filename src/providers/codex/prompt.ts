@@ -3,15 +3,21 @@ import type {
   FunctionCallOutput,
 } from "#providers/codex/schemas.js";
 
-function extractContent(content: string | Record<string, unknown>[]): string {
+function extractContent(content: unknown): string {
   if (typeof content === "string") return content;
-  return content
-    .filter(
-      (c): c is Record<string, unknown> & { text: string } =>
-        typeof c["text"] === "string",
-    )
-    .map((c) => c.text)
-    .join("");
+  if (!Array.isArray(content)) return "";
+  let text = "";
+  for (const part of content) {
+    if (
+      part &&
+      typeof part === "object" &&
+      "text" in part &&
+      typeof part.text === "string"
+    ) {
+      text += part.text;
+    }
+  }
+  return text;
 }
 
 export function formatResponsesPrompt(input: string | InputItem[]): string {
@@ -27,22 +33,22 @@ export function formatResponsesPrompt(input: string | InputItem[]): string {
       switch (item.role) {
         case "system":
         case "developer":
-          continue;
+          break;
         case "user":
           parts.push(`[User]: ${content}`);
           break;
         case "assistant":
           if (content) parts.push(`[Assistant]: ${content}`);
           break;
-        default:
-          item.role satisfies never;
       }
     } else if (item.type === "function_call") {
       parts.push(
-        `[Assistant called tool ${item.name} with args: ${item.arguments}]`,
+        `[Assistant called tool ${String(item.name)} with args: ${String(item.arguments)}]`,
       );
-    } else {
-      parts.push(`[Tool result for ${item.call_id}]: ${item.output}`);
+    } else if (item.type === "function_call_output") {
+      parts.push(
+        `[Tool result for ${String(item.call_id)}]: ${String(item.output)}`,
+      );
     }
   }
 

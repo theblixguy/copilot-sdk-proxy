@@ -23,16 +23,21 @@ export function formatPrompt(messages: Message[]): string {
         }
         if (msg.tool_calls) {
           for (const tc of msg.tool_calls) {
+            const call =
+              "function" in tc
+                ? { name: tc.function.name, args: tc.function.arguments }
+                : { name: tc.custom.name, args: tc.custom.input };
             parts.push(
-              `[Assistant called tool ${tc.function.name} with args: ${tc.function.arguments}]`,
+              `[Assistant called tool ${call.name} with args: ${call.args}]`,
             );
           }
         }
         break;
 
       case "tool":
+      case "function":
         parts.push(
-          `[Tool result for ${msg.tool_call_id ?? "unknown"}]: ${content}`,
+          `[Tool result for ${msg.tool_call_id ?? msg.name ?? "unknown"}]: ${content}`,
         );
         break;
 

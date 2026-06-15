@@ -11,20 +11,29 @@ function extractToolResultText(
   return content.map((b) => b.text).join("");
 }
 
+function speakerLabel(role: AnthropicMessage["role"]): string {
+  switch (role) {
+    case "user":
+      return "User";
+    case "system":
+      return "System";
+    case "assistant":
+      return "Assistant";
+    default:
+      return role satisfies never;
+  }
+}
+
 function formatBlocks(
   blocks: ContentBlock[],
-  role: "user" | "assistant",
+  role: AnthropicMessage["role"],
   parts: string[],
 ): void {
   for (const block of blocks) {
     switch (block.type) {
       case "text":
         if (!block.text) break;
-        if (role === "user") {
-          parts.push(`[User]: ${block.text}`);
-        } else {
-          parts.push(`[Assistant]: ${block.text}`);
-        }
+        parts.push(`[${speakerLabel(role)}]: ${block.text}`);
         break;
 
       case "tool_use":
@@ -51,11 +60,7 @@ export function formatAnthropicPrompt(messages: AnthropicMessage[]): string {
 
   for (const msg of messages) {
     if (typeof msg.content === "string") {
-      if (msg.role === "user") {
-        parts.push(`[User]: ${msg.content}`);
-      } else {
-        parts.push(`[Assistant]: ${msg.content}`);
-      }
+      parts.push(`[${speakerLabel(msg.role)}]: ${msg.content}`);
     } else {
       formatBlocks(msg.content, msg.role, parts);
     }

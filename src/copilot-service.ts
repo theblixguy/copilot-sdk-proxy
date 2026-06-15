@@ -28,7 +28,7 @@ export class CopilotService {
     this.logger = options.logger;
     this.client = new CopilotClient({
       logLevel: options.logLevel ?? "error",
-      cwd: this.cwd,
+      workingDirectory: this.cwd,
       env: Object.fromEntries(
         Object.entries(process.env).filter(
           (e): e is [string, string] => e[1] != null,
@@ -55,7 +55,7 @@ export class CopilotService {
 
   async ping(
     message?: string,
-  ): Promise<{ message: string; timestamp: number; protocolVersion?: number }> {
+  ): Promise<{ message: string; timestamp: string; protocolVersion?: number }> {
     return this.client.ping(message);
   }
 
