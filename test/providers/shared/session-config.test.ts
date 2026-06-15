@@ -1,10 +1,15 @@
 import { describe, it, expect, vi } from "vitest";
+import type { PermissionRequest } from "@github/copilot-sdk";
 import {
   createSessionConfig,
   toSdkEffort,
 } from "#providers/shared/session-config.js";
 import { Logger } from "#logger.js";
 import type { ServerConfig } from "#config.js";
+
+function permissionRequest(kind: PermissionRequest["kind"]): PermissionRequest {
+  return { kind } as PermissionRequest;
+}
 
 function defaultConfig(overrides?: Partial<ServerConfig>): ServerConfig {
   return {
@@ -169,8 +174,8 @@ describe("createSessionConfig", () => {
       config: defaultConfig({ autoApprovePermissions: true }),
       supportsReasoningEffort: false,
     });
-    const response = await result.onPermissionRequest(
-      { kind: "read" },
+    const response = await result.onPermissionRequest!(
+      permissionRequest("read"),
       { sessionId: "test" },
     );
     expect(response.kind).toBe("approve-for-session");
@@ -185,8 +190,8 @@ describe("createSessionConfig", () => {
         config: defaultConfig({ autoApprovePermissions: true }),
         supportsReasoningEffort: false,
       });
-      const response = await result.onPermissionRequest(
-        { kind },
+      const response = await result.onPermissionRequest!(
+        permissionRequest(kind),
         { sessionId: "test" },
       );
       expect(response).toEqual({
@@ -205,8 +210,8 @@ describe("createSessionConfig", () => {
         config: defaultConfig({ autoApprovePermissions: true }),
         supportsReasoningEffort: false,
       });
-      const response = await result.onPermissionRequest(
-        { kind },
+      const response = await result.onPermissionRequest!(
+        permissionRequest(kind),
         { sessionId: "test" },
       );
       expect(response).toEqual({ kind: "approve-once" });
@@ -220,8 +225,8 @@ describe("createSessionConfig", () => {
       config: defaultConfig({ autoApprovePermissions: false }),
       supportsReasoningEffort: false,
     });
-    const response = await result.onPermissionRequest(
-      { kind: "read" },
+    const response = await result.onPermissionRequest!(
+      permissionRequest("read"),
       { sessionId: "test" },
     );
     expect(response.kind).toBe("reject");
@@ -234,13 +239,13 @@ describe("createSessionConfig", () => {
       config: defaultConfig({ autoApprovePermissions: ["read", "write"] }),
       supportsReasoningEffort: false,
     });
-    const readResponse = await result.onPermissionRequest(
-      { kind: "read" },
+    const readResponse = await result.onPermissionRequest!(
+      permissionRequest("read"),
       { sessionId: "test" },
     );
     expect(readResponse.kind).toBe("approve-for-session");
-    const shellResponse = await result.onPermissionRequest(
-      { kind: "shell" },
+    const shellResponse = await result.onPermissionRequest!(
+      permissionRequest("shell"),
       { sessionId: "test" },
     );
     expect(shellResponse.kind).toBe("reject");

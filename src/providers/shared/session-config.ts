@@ -82,7 +82,7 @@ export function createSessionConfig({
       logger.debug(`User input requested: "${request.question}"`);
       return Promise.resolve({
         answer:
-          "User input is not available. Ask your question in your response instead.",
+          "Interactive input is not available here. Ask the user directly in your reply instead, presenting any choices as a short numbered list.",
         wasFreeform: true,
       });
     },

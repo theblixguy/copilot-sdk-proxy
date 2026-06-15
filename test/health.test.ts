@@ -37,7 +37,7 @@ describe("GET /health", () => {
 
   it("returns 200 with status ok when ping succeeds", async () => {
     const ctx = createCtx(() =>
-      Promise.resolve({ message: "health", timestamp: 1000 }),
+      Promise.resolve({ message: "health", timestamp: "1000" }),
     );
     app = await createServer(ctx, noopProvider);
 
@@ -47,7 +47,7 @@ describe("GET /health", () => {
     expect(res.json()).toEqual({
       status: "ok",
       message: "health",
-      timestamp: 1000,
+      timestamp: "1000",
     });
   });
 

@@ -24,7 +24,7 @@ export interface ToolResultBlock {
 export type ContentBlock = TextBlock | ToolUseBlock | ToolResultBlock;
 
 export interface AnthropicMessage {
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "system";
   content: string | ContentBlock[];
 }
 
@@ -116,7 +116,8 @@ export interface AnthropicRequest {
   [key: string]: unknown;
 }
 
-// prompt.ts does exhaustive switch on block types, so filter out unknown ones
+// Drop unknown content blocks and tools without an input_schema; prompt.ts and
+// count-tokens.ts assume those shapes.
 function filterUnknownBlocks(data: BaseAnthropicRequest): AnthropicRequest {
   return {
     ...data,
@@ -129,6 +130,12 @@ function filterUnknownBlocks(data: BaseAnthropicRequest): AnthropicRequest {
               KNOWN_BLOCK_TYPES.has(b.type),
             ),
     })),
+    tools: data.tools?.filter(
+      (t): t is AnthropicToolDefinition =>
+        typeof t["name"] === "string" &&
+        typeof t["input_schema"] === "object" &&
+        t["input_schema"] !== null,
+    ),
   } satisfies AnthropicRequest;
 }
 
